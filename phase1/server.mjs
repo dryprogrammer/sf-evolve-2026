@@ -4,10 +4,11 @@ import { readFile, mkdir, appendFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
 import { CommandCapture } from './capture.mjs';
+import { ModelSnapshotCapture } from './model-snapshots.mjs';
 
 const dir = dirname(fileURLToPath(import.meta.url));
 export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/commands',interval=250,
-  dataDir=join(dir,'../.phase1-data'),agentMap={},commandAgentMap={},identityFile=null,includeHistory=false}={}) {
+  dataDir=join(dir,'../.phase1-data'),agentMap={},commandAgentMap={},identityFile=null,modelSnapshotFile=null,includeHistory=false}={}) {
   await mkdir(dataDir,{recursive:true,mode:0o700});
   const events=[], clients=new Set(); let seq=0, persistence=Promise.resolve(), writeErrors=0;
   const runId=randomUUID();
@@ -27,11 +28,14 @@ export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/comm
     return item;
   };
   const capture = new CommandCapture({root,emit,agentMap,commandAgentMap,includeHistory});
-  const metrics = () => ({runId,mode:'workspace-exec fallback',uptimeMs:Date.now()-began,
+  const modelCapture=new ModelSnapshotCapture({file:modelSnapshotFile??join(dataDir,'model-snapshots.json'),emit});
+  const metrics = () => ({runId,mode:'workspace-exec + imported conversation snapshots',uptimeMs:Date.now()-began,
     eventCount:seq,retainedEvents:events.length,clients:clients.size,writeErrors,
     cpu:process.cpuUsage(initialCpu),rssBytes:process.memoryUsage().rss,
+    modelSnapshots:{...modelCapture.metrics,delivery:'agent-assisted snapshot import; not live tokens'},
     capture:{...capture.metrics,averageScanMs:capture.metrics.scanMs/Math.max(capture.metrics.scans,1)},
     capabilities:{execLifecycle:'verified locally',execOutput:'verified locally',
+      modelOutput:'assistant text via agent-assisted conversation snapshots; not token streaming',
       agentState:'unavailable',agentTurnCompletion:'unavailable in this fallback',steering:'disabled; unverified'}});
   const server=http.createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
@@ -59,7 +63,7 @@ export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/comm
       'Content-Security-Policy':"default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self' http://127.0.0.1:4318 http://localhost:4318; object-src 'none'; base-uri 'none'"});
     res.end(await readFile(join(dir,'inspector.html')));
   });
-  await capture.scan();
+  await capture.scan();await modelCapture.scan();
   let scanning=false;
   const timer=setInterval(async()=>{if(scanning)return;scanning=true;try{
       if(identityFile) {
@@ -69,7 +73,7 @@ export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/comm
           for(const e of events) if(capture.commandAgentMap[e.commandId])e.agent=capture.commandAgentMap[e.commandId];
         } catch (e) {capture.metrics.errors++;capture.metrics.identityErrors++;capture.metrics.lastError=String(e);}
       }
-      await capture.scan();}finally{scanning=false;}},interval);
+      await capture.scan();await modelCapture.scan();}finally{scanning=false;}},interval);
   const heartbeat=setInterval(()=>{for(const res of clients)res.write(': heartbeat\n\n');},5000);
   await new Promise(resolve=>server.listen(port,host,resolve));
   return {server,capture,events,emit,metrics,runId,url:`http://${host}:${server.address().port}`,
@@ -79,7 +83,7 @@ export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/comm
 if(process.argv[1]===fileURLToPath(import.meta.url)) {
   const app=await startInspector({port:Number(process.env.INSPECTOR_PORT??4318),
     host:process.env.INSPECTOR_HOST??'127.0.0.1',dataDir:process.env.INSPECTOR_DATA_DIR??join(dir,'../.phase1-data'),root:process.env.COMMAND_ROOT??'/tmp/commands',
-    agentMap:JSON.parse(process.env.AGENT_MAP??'{}'),identityFile:process.env.COMMAND_AGENT_MAP_PATH??null,includeHistory:process.env.INCLUDE_HISTORY==='1'});
-  console.log(`Live inspector: ${app.url} (read-only; workspace exec fallback)`);
+    agentMap:JSON.parse(process.env.AGENT_MAP??'{}'),identityFile:process.env.COMMAND_AGENT_MAP_PATH??null,modelSnapshotFile:process.env.MODEL_SNAPSHOT_FILE??null,includeHistory:process.env.INCLUDE_HISTORY==='1'});
+  console.log(`Live inspector: ${app.url} (read-only; exec feed + imported model snapshots)`);
   for(const sig of ['SIGINT','SIGTERM'])process.on(sig,async()=>{await app.close();process.exit(0);});
 }
