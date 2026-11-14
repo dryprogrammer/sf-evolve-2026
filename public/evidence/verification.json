@@ -1,1 +1,86 @@
-{"status":"verification_in_progress","note":"Final verification capture will replace this record; do not claim browser verification complete yet."}
+{
+  "status": "passed",
+  "verifiedRevision": "e862a3b0e5e14c478d18a61598302f06c5004663",
+  "capturedAt": "2026-11-14T18:51:13.395Z",
+  "browserExecutable": "/opt/ms-playwright/chromium-1217/chrome-linux64/chrome",
+  "sourceHashes": {
+    "migrations/001_initial.sql": "106805990ddf81ba890b2e3a0f8619341d67a8e2fb02608184e5ba93d0804ade",
+    "package-lock.json": "6e610adac8971d45f3243a25f79b1202bb3b6e1636285558d6fa009006b5755d",
+    "package.json": "d39ff14bedd247312fc8b72d362c94591fd15a2171188a78097eaf78e1c57a97",
+    "playwright.config.ts": "2a8322ed9a56db8d72b32adc5d43d1dfddf8a856856b84ce5953fcf77f5e569b",
+    "src/app/api/factory/route.ts": "347307d198e3a08d0dfb5c78f6357bac42d5a18020799f574cc83c568b9380b8",
+    "src/app/api/session/route.ts": "57ef6a1f278eb040677b68613fdba102b36a1a9619e64a260fd9cc825d8b6a3b",
+    "src/app/factory.css": "41eb38f779757476493cc8d22629ec802b6cb9c8d7633e2f9b4d04dd5935c0d7",
+    "src/app/globals.css": "e9ee91e754565ba4ba6dbe9bb8f8e338fd4cb2e149372cfc43cc35c6de2991f4",
+    "src/app/layout.tsx": "b25dafc7cf8223ff06de0055fd45e9945541b66f5627c73d4379d2b47943e822",
+    "src/app/page.tsx": "17513af3c55f4caf27c2cb56bb7895f0c343b3d3c3552798982f72e5ad899dc2",
+    "src/components/EvidenceChain.tsx": "ad17c7c58065c8d945880cb9e510d403ecf1618474be8236d81e6c01a3bc4f2c",
+    "src/components/NeedsYou.tsx": "e0e89c69d7e02f36e8fb5a69a699634e50691fcee76ccc5ad85c00832a3bbbfb",
+    "src/components/PerspectiveVoices.tsx": "e1f48b8f12b72e6f33bf0f32ce9c3786c9eef860850f83acb5ecc0ddc35d3afc",
+    "src/components/WorkInspector.tsx": "7fbbe2b6b492879e4ff990b1c480250318032379cc67a890af0ac99de49dfed8",
+    "src/components/factory/FactoryScene.tsx": "491e41b1902bb76a13c67bc1a6edcd4b574aecb148d6e95db7cc08aa648b7c08",
+    "src/components/factory/navigation.ts": "b24b01ac433658cd0e1153b6bbb2c160a55472be38cd0cd61643f875c4a5f8f4",
+    "src/components/factory/render.ts": "ea8ca4e4261071b03e714759518f669c8674187e94f84c18aef96fc733b189b9",
+    "src/components/factory/world.ts": "53240ff3e3a69775d2bd9906c412a8ec26bd8ae4c54b23d206c76336ff8b9481",
+    "src/components/handoff.css": "09e28a33cb705394ca4091a63e2676df2cbc0bece026e907b24f1f2f6655a381",
+    "src/components/perspective-voices.css": "76e5338543af741ff3cccfdc0fe852b6e40d6bdd2870a5a6cbc5b36b8f8a9e56",
+    "src/lib/attention.ts": "7882240e2ab5d30860cf92b3216029b691f4fb1e31a45876f842786ff09f6b5a",
+    "src/lib/canonical.ts": "429e7e0a1f00e7e8446a3741e75fe343e3b70d419c4c5321c149d7c674d32c2a",
+    "src/lib/contracts.ts": "44558617cab6b31625ed6ca9c2c06d5add5e3132a41ec9f0814a1a101c66e4fe",
+    "src/lib/fixtures.ts": "a2accbe3329d8b14e473e8cacb4a554c421897af994d4a20e421913e675a7a38",
+    "src/lib/http.ts": "13a6a999357da9090265233ae957f319df1e5fe80c6cc4e3510099f199eae312",
+    "src/lib/renewal.ts": "cc19454cae27de137f7ac82944693e39f0f24744ad848c6c2922b4d1ef21bd81",
+    "src/lib/review.ts": "753e4d5aee97fef5f22c05e252b512c7836ce28324a2bd3a8e27796d62c037ac",
+    "src/lib/store.ts": "f9784aa3ef978e768b9d6e1bffc408a9c7084c714e1a3a0e978fd0d3d2d20581",
+    "tests/attention.test.ts": "f76df0f53f4a5072dfd87478923c9cd295b4da52526a45b1683753dff1f5b206",
+    "tests/browser/factory.spec.ts": "81e7b02f34af5b4c721aa0f342f539aab6d7c740e6f9c60fa5eb94cf455a7dea",
+    "tests/browser/handoff.spec.ts": "02b6ad5c2eef9ffac16c7270688e0f54bff545ac63fea6e726f07cf40a3271fd",
+    "tests/browser/journey.spec.ts": "81f1c94e6fd0acb5f82e628ab9fcabc490e50bbe7a5b69086f2ed400e759f81d",
+    "tests/browser/story.spec.ts": "dbe5adc22c909b05b172f3d6b3187e81493411523a962ae1977d655546252e95",
+    "tests/handoff-gates.test.ts": "7f32eaca38cfbb91631dc94385555ef39cbf28f24d8a3a5c939ea0504b049cb1",
+    "tests/http.test.ts": "39ea51765c657b453cb971848b0e077763ab5157083435ab4d6c13e0a932dff2",
+    "tests/navigation.test.ts": "f347a54862480a3561ca0b664a2f0995ec06f3c344ee161c0fb6a328d042a9d1",
+    "tests/renewal.test.ts": "bf7a835f012885e10d6ca80994da5087f50f180137ba42de9015d322f8f9119f",
+    "tests/review.test.ts": "6854c069bfe0f99e4d818d869df49e5489463a31585542962e0c13e903910362",
+    "tests/store.test.ts": "a6daf3f84ad19cf349640b804e69a9dc77a907a2ccdc95db42504535449b0a7b",
+    "tsconfig.json": "5e84bc0c9bf901d0c2af53c37e00e4bd0704739deafb086fb9a9162ad8258f18",
+    "vitest.config.ts": "a716e39be19bbe3f140c58c0d0f6646e19ed714b041c2faccde53b9acaa89565"
+  },
+  "checks": [
+    {
+      "command": "npm run typecheck",
+      "startedAt": "2026-11-14T18:50:26.368Z",
+      "finishedAt": "2026-11-14T18:50:28.696Z",
+      "exitCode": 0,
+      "log": "docs/evidence/typecheck.log"
+    },
+    {
+      "command": "npm run test",
+      "startedAt": "2026-11-14T18:50:28.698Z",
+      "finishedAt": "2026-11-14T18:50:37.413Z",
+      "exitCode": 0,
+      "log": "docs/evidence/test.log"
+    },
+    {
+      "command": "npm run build",
+      "startedAt": "2026-11-14T18:50:37.413Z",
+      "finishedAt": "2026-11-14T18:50:39.806Z",
+      "exitCode": 0,
+      "log": "docs/evidence/build.log"
+    },
+    {
+      "command": "npm run test:e2e",
+      "startedAt": "2026-11-14T18:50:39.806Z",
+      "finishedAt": "2026-11-14T18:51:13.394Z",
+      "exitCode": 0,
+      "log": "docs/evidence/test-e2e.log"
+    }
+  ],
+  "limitations": [
+    "Captured local verification, not deployment, public submission or independent human approval.",
+    "Source hashes identify tested files; later edits require verification again.",
+    "Fictional seeded business inputs and selectable fixture personas; source mutation is simulated.",
+    "The recorded review checks a snapshot; it does not implement or release billing changes."
+  ],
+  "logFormat": "Captured command output; terminal carriage returns and trailing whitespace normalized for committed logs."
+}

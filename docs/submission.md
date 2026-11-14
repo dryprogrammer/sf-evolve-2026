@@ -21,15 +21,15 @@
 - Demo video: [HUMAN: attach recording and insert accessible link]
 - Demo URL: [HUMAN: insert only if approved and access-tested; otherwise say local recorded demo]
 
-## Integration gate: keep blocker with parent
+## Integrated and verified slice
 
-This pack owns only this file and `demo-script.md`. It reuses the PR2 foundation at `480210bef24563e19793d48cde30f993182acca3`; it does not implement or resolve the immediate integration blocker.
+The parent integrated the renewal fixture, committed seed references, visible “Needs you” obligation/action projection, revision-linked contribution/decision chain and optional caption/browser-voice module. The actual acceptance-example implementation and tests share commit `5ba2f24`. The source change remains a local, disclosed fixture addendum—not a committed policy edit or live adapter.
 
-At that revision, `src/lib/fixtures.ts` seeds the generic **DEMO-1 / Introduce a human review checkpoint**, not a renewal scenario. Evidence cards contain fixture text, not clickable source links. The UI shows **Required sign-off pending**, not **Needs you**. Parent must integrate and verify the renewal fixture, source references, obligation presentation, and any chain navigation before using the story copy as a description of the running build. If not integrated, explicitly narrate these as story framing and show the real generic controls; do not relabel a screenshot or imply shipped features. Baseline stale-source simulation appends generic changed-evidence text; it does not implement a 15→20% business-policy mutation.
+Captured typecheck, unit/service, production build and real-backend browser results are in [verification.json](../public/evidence/verification.json), with tested revision and per-file hashes. [Raw gate recording and screenshot](evidence/capture.md) are reproducible evidence, not an edited/narrated final submission video.
 
 ## Submission checklist — owner action, not agent authorization
 
-- [ ] Parent resolves or explicitly discloses the integration blocker; record final hash and run the [demo preflight](demo-script.md#preflight--before-recording).
+- [ ] Use the captured verification revision and final PR hash and run the [demo preflight](demo-script.md#preflight--before-recording).
 - [ ] Human reviews every claim against the recorded build; remove unsupported story/UI claims.
 - [ ] Human reviews MIT/license expectations, dependency and asset licenses, and permission to publish. No LICENSE is created here; no license compliance or eligibility is asserted.
 - [ ] Human reviews prior work disclosure: PR2 foundation, pre-existing persistence/review engine, and exactly what changed for this event. Verify dates/rules; do not claim everything was built during the hackathon.
@@ -39,4 +39,4 @@ At that revision, `src/lib/fixtures.ts` seeds the generic **DEMO-1 / Introduce a
 - [ ] Work to the conservative handoff schedule on **November 14, 2026: freeze 19:32 UTC; due approximately 19:52 UTC**. These are operative planning cutoffs, not newly verified official deadlines. **No refreshed 90-minute allowance.** If a cutoff has passed, escalate to the parent/human rather than assuming an extension.
 - [ ] **A human must explicitly approve any public publish or submit.** Then the human attaches the video, fills reviewed URLs/disclosures, and performs the actual portal submission. Save its receipt only if one is actually returned.
 
-**Exact handoff action:** Parent verifies the integrated build and supplies the final hash. Human records the script, attaches the video, checks access, reviews rules/license/prior-work/tool disclosures, and approves public release before personally pressing the portal's publish/submit control. Destination validity, official eligibility, license status, public URL, video, and submission receipt remain unknown until checked.
+**Exact handoff action:** The integrated build and its test evidence are supplied in the PR; verify the submission uses that revision. Human records the script, attaches the video, checks access, reviews rules/license/prior-work/tool disclosures, and approves public release before personally pressing the portal's publish/submit control. Destination validity, official eligibility, license status, public URL, video, and submission receipt remain unknown until checked.
