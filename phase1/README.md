@@ -131,4 +131,18 @@ Prefer **browser-attached CDP capture of the app’s authenticated native resuma
 
 Before claiming full Phase 1 feasibility: authenticate an authorized test browser/session, monitor two independently active native conversations, measure `done`/terminal status and replay, and send one controlled instruction while a test agent is executing, checking acceptance, consumption event and effect separately. Also test turn-completion history updates if live transport fails.
 
-**No Phase 2 authorization has been given.** The decision is whether to approve a limited exec-only visual integration, or keep Phase 1 open until authenticated native streaming and steering are validated. No virtual-world files have been edited; main contains only a README and another remote branch contains an unfinished collaboration pilot.
+**Architecture direction approved; Phase 1 feasibility is not passed and Phase 2 remains paused.** The governing [Live Supervision Acceptance Gate](https://factory.8090.ai/project/e6c7fbf5-1f8a-4427-a320-c9eaad5ff200/knowledge-base/d3155727-18c5-49ae-82e4-403643ee894c) requires a real worker/observer/human-steering loop and authoritative final convergence. The existing shell feed, imported messages and isolated CDP transport proof remain partial results; they do not substitute for that loop. No virtual-world runtime files have been edited on this Phase 1 branch.
+
+
+## Approved supervision architecture and revised Phase 1 scope
+
+The architecture extends observation into an evidence-backed supervision loop without rewriting the factory or starting Phase 2. Shared modules separate capture, run-state projection, bounded read-only observer coordination, prioritized human attention, authorized steering and authoritative final reconciliation. They are target designs, not newly implemented runtime capabilities.
+
+- [Live Agent Supervision requirements](https://factory.8090.ai/project/e6c7fbf5-1f8a-4427-a320-c9eaad5ff200/requirements/5f1daefe-7e2d-40f3-b5c7-94f0d38d5435)
+- [Execution Observation and Supervision architecture](https://factory.8090.ai/project/e6c7fbf5-1f8a-4427-a320-c9eaad5ff200/blueprints/dd89af4b-ecf6-42ed-84ea-e5462a614a48)
+- [Live Agent Supervision feature composition](https://factory.8090.ai/project/e6c7fbf5-1f8a-4427-a320-c9eaad5ff200/blueprints/ac52c622-f3af-476b-9772-632914d5c954)
+- [Phase 1 pass/fail/blocked acceptance gate](https://factory.8090.ai/project/e6c7fbf5-1f8a-4427-a320-c9eaad5ff200/knowledge-base/d3155727-18c5-49ae-82e4-403643ee894c)
+
+The smallest proof uses one real worker, one actual observer and one authorized human. It must show real in-turn model evidence, changing artifacts, a grounded concern or decision, source-confirmed instruction consumption during execution, and a final display matching the complete permitted source result. Representative 60-second and 600-second real-work observation, concurrent worker association, capture gaps, observer failure and measured overhead are part of the evidence report. Meaningful change triggers and an explicit finite observer budget prevent analyzing every token or silently spending on inference.
+
+Observer interpretations do not overwrite source facts or steer the worker automatically. Imported snapshots serve baseline/recovery/final reconciliation, not a substitute for in-turn model capture. A tool exit is not a turn-end signal; local acceptance is not remote consumption or compliance. If a core source capability is blocked, the gate stays blocked. Architecture approval is not Phase 2 implementation approval.

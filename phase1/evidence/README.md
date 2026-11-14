@@ -33,6 +33,6 @@
 - Initial run logged **143 transient read errors** whose source was not differentiated. No expected marker loss occurred; the hardened run adds categorized diagnostics. Do not hide the initial errors.
 
 ## Recommendation and gate
-Prioritize passive CDP capture from the authenticated app’s native resumable SSE, with workspace exec as a narrowly labeled fallback. Keep Phase 1 open for authenticated native/turn-completion/steering validation, **or explicitly approve a limited exec-only Phase 2 integration**. Approval is required before any world modification.
+Prioritize passive CDP capture from the authenticated app’s native resumable SSE, with workspace exec as a narrowly labeled fallback. The approved [Phase 1 — Live Supervision Acceptance Gate](https://factory.8090.ai/project/e6c7fbf5-1f8a-4427-a320-c9eaad5ff200/knowledge-base/d3155727-18c5-49ae-82e4-403643ee894c) now requires genuine in-turn model evidence, a grounded read-only observer insight, authorized steering consumed during execution and authoritative final reconciliation. Existing shell, imported-snapshot and local-CDP results remain partial proofs; they do not establish that loop. Phase 2 remains paused until the feasibility gate is demonstrated and the user gives separate approval.
 
 Files below provide actual measurements, concurrency lifecycle metadata, authentication rejection, and exact public frontend contract evidence. Full reproduction instructions are in the repository's `phase1/README.md`. Raw runtime logs remain local/gitignored; only selected non-sensitive evidence is published.
