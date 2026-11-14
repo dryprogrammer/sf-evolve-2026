@@ -1,6 +1,6 @@
 {
-  "verifiedCodeRevision": "126d3c823c51f29e932a94e0b90e62177832252f",
-  "capturedAt": "2026-11-14T20:28:16.865882+00:00",
+  "verifiedCodeRevision": "cc62da0e6567a45f1f60780cce2b54e1fb81454e",
+  "capturedAt": "2026-11-14T20:31:02.963630+00:00",
   "checks": {
     "typecheck": "passed",
     "unitServiceTests": 83,
@@ -21,11 +21,11 @@
     "src/app/globals.css": "e9ee91e754565ba4ba6dbe9bb8f8e338fd4cb2e149372cfc43cc35c6de2991f4",
     "src/app/layout.tsx": "d8acce1ae98d57d41c6e165fbb9e6f1aa3664d027cb52b8736a8a4f7e809c520",
     "src/app/native.css": "ec09629dfaec414d562fb6acf03976cf40f37c0f443f1bbff37ebfb733113e84",
-    "src/app/page.tsx": "19f05d80d1828fdd07f472d3f40c2d3f53aad648390ec3cb5f2cc42f3066d35e",
+    "src/app/page.tsx": "c9f84bad2a875d62cca57ac3a30ce687089acdc8703ef83d5711af5c4bd42b27",
     "src/components/EvidenceChain.tsx": "144e34d86276ba407d8b41a1d77e5b8d711219f2d18f7bd83edea5cace2a76c0",
     "src/components/NeedsYou.tsx": "64a7f541ed07e59ef881ab8919b8495fa17fbf49e17b4c8c27ca1e450fdffa81",
     "src/components/PerspectiveVoices.tsx": "e1f48b8f12b72e6f33bf0f32ce9c3786c9eef860850f83acb5ecc0ddc35d3afc",
-    "src/components/WorkInspector.tsx": "cb759bad5a0775e2f8870cc4d4ca3b5c9633af5ca5d3b702de6ea51783c5339b",
+    "src/components/WorkInspector.tsx": "09d803c141f89d791958aac85ae2c3247a12a6484e1c669bf725747a933cbc6b",
     "src/components/factory/FactoryScene.tsx": "491e41b1902bb76a13c67bc1a6edcd4b574aecb148d6e95db7cc08aa648b7c08",
     "src/components/factory/navigation.ts": "b24b01ac433658cd0e1153b6bbb2c160a55472be38cd0cd61643f875c4a5f8f4",
     "src/components/factory/render.ts": "ea8ca4e4261071b03e714759518f669c8674187e94f84c18aef96fc733b189b9",
@@ -69,5 +69,8 @@
     "Fixture fallback tested separately; mock contract tests are not live evidence",
     "No native Factory approval/deployment/release/submission",
     "Repository private; no key values in committed evidence"
-  ]
+  ],
+  "liveProofBackendUnchangedSinceVerification": true,
+  "featureFreezeAt": "2026-11-14T20:31:02.977515+00:00",
+  "freezeReason": "API/UI code verified and frozen early; MCP remains blocked, not fabricated."
 }
