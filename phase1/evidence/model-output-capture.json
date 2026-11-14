@@ -1,0 +1,123 @@
+{
+  "checkedAt": "2026-11-14T10:52:24.679002+00:00",
+  "sourceTool": "read_agent_conversation",
+  "conversationId": "a538b4eb-cf24-5ff4-a694-7f8973b4d0b0",
+  "delivery": "agent-assisted snapshot import, not native model-token streaming",
+  "sourceHandling": "Selected assistant messages copied from supported reader output; trusted importer, not signed provenance",
+  "capturedCount": 5,
+  "textMatchesInput": true,
+  "generationTimestampAvailable": false,
+  "agentTurnCompletionInferred": false,
+  "snapshots": [
+    {
+      "type": "assistant.message.observed",
+      "source": "conversation-tool-snapshot",
+      "agent": "a538b4eb-cf24-5ff4-a694-7f8973b4d0b0",
+      "sourceAt": null,
+      "historical": true,
+      "summary": "Model-written assistant message · imported snapshot",
+      "payload": {
+        "role": "assistant",
+        "conversationId": "a538b4eb-cf24-5ff4-a694-7f8973b4d0b0",
+        "text": "I’ll inspect the bundle read-only, emit the eight timestamped findings for concurrent capture, and locate the command metadata. I’ll distinguish static frontend behavior from runtime behavior this audit cannot verify.",
+        "sourceTool": "read_agent_conversation",
+        "importedAt": "2026-11-14T10:51:48.093Z",
+        "contentId": "a4ed067b8d43b49f5e887d164fdd6df3e70ff378aa3be826a7521c38112d3806",
+        "delivery": "agent-assisted snapshot import; not live tokens",
+        "sourceMessageId": null,
+        "generationTimestamp": null
+      },
+      "id": 3,
+      "capturedAt": "2026-11-14T10:51:48.232Z",
+      "captureLatencyMs": null
+    },
+    {
+      "type": "assistant.message.observed",
+      "source": "conversation-tool-snapshot",
+      "agent": "a538b4eb-cf24-5ff4-a694-7f8973b4d0b0",
+      "sourceAt": null,
+      "historical": true,
+      "summary": "Model-written assistant message · imported snapshot",
+      "payload": {
+        "role": "assistant",
+        "conversationId": "a538b4eb-cf24-5ff4-a694-7f8973b4d0b0",
+        "text": "All eight patterns are present, and the command emitted eight JSON lines one second apart. The bundle shows stream reconnection using `last_event_id`, input POSTs, and separate queue/status events. I’ll now trace acceptance, consumption, and tool-boundary handling, then retrieve the capture IDs.",
+        "sourceTool": "read_agent_conversation",
+        "importedAt": "2026-11-14T10:51:48.093Z",
+        "contentId": "01759f16b567abc39a0fe16b2217125d82d850e413b8cdafac70ed490572b9ec",
+        "delivery": "agent-assisted snapshot import; not live tokens",
+        "sourceMessageId": null,
+        "generationTimestamp": null
+      },
+      "id": 4,
+      "capturedAt": "2026-11-14T10:51:48.232Z",
+      "captureLatencyMs": null
+    },
+    {
+      "type": "assistant.message.observed",
+      "source": "conversation-tool-snapshot",
+      "agent": "a538b4eb-cf24-5ff4-a694-7f8973b4d0b0",
+      "sourceAt": null,
+      "historical": true,
+      "summary": "Model-written assistant message · imported snapshot",
+      "payload": {
+        "role": "assistant",
+        "conversationId": "a538b4eb-cf24-5ff4-a694-7f8973b4d0b0",
+        "text": "The frontend explicitly distinguishes accepted inputs with `queued` or `started` dispositions from consumption observed on the stream. It also tracks tool calls and results separately. I’ve found the audit command’s metadata; I’ll check the stream-to-consumption mapping before concluding.",
+        "sourceTool": "read_agent_conversation",
+        "importedAt": "2026-11-14T10:51:48.093Z",
+        "contentId": "00f6e7458c1e42002d394e1b957fed4a67c55fb64749799716301203f40d3f61",
+        "delivery": "agent-assisted snapshot import; not live tokens",
+        "sourceMessageId": null,
+        "generationTimestamp": null
+      },
+      "id": 5,
+      "capturedAt": "2026-11-14T10:51:48.233Z",
+      "captureLatencyMs": null
+    },
+    {
+      "type": "assistant.message.observed",
+      "source": "conversation-tool-snapshot",
+      "agent": "a538b4eb-cf24-5ff4-a694-7f8973b4d0b0",
+      "sourceAt": null,
+      "historical": true,
+      "summary": "Model-written assistant message · imported snapshot",
+      "payload": {
+        "role": "assistant",
+        "conversationId": "a538b4eb-cf24-5ff4-a694-7f8973b4d0b0",
+        "text": "I’ll read the three files and check snapshot provenance, timing/completion claims, and security boundaries without changing source or duplicating tests.",
+        "sourceTool": "read_agent_conversation",
+        "importedAt": "2026-11-14T10:52:23.641Z",
+        "contentId": "de8071b8b1a8fb9622c821edc1f7a0c8d09c839a38612dd3ad5b50c89c1c64bf",
+        "delivery": "agent-assisted snapshot import; not live tokens",
+        "sourceMessageId": null,
+        "generationTimestamp": null
+      },
+      "id": 10,
+      "capturedAt": "2026-11-14T10:52:23.787Z",
+      "captureLatencyMs": null
+    },
+    {
+      "type": "assistant.message.observed",
+      "source": "conversation-tool-snapshot",
+      "agent": "a538b4eb-cf24-5ff4-a694-7f8973b4d0b0",
+      "sourceAt": null,
+      "historical": true,
+      "summary": "Model-written assistant message · imported snapshot",
+      "payload": {
+        "role": "assistant",
+        "conversationId": "a538b4eb-cf24-5ff4-a694-7f8973b4d0b0",
+        "text": "Reviewed `phase1/model-snapshots.mjs`, `phase1/server.mjs`, and `phase1/inspector.html`.\n\nThe presentation **does not falsely claim live tokens, generation timestamps, or agent-turn completion**. Snapshot events have null source/generation timestamps; import and capture times are distinguished; UI and metrics explicitly disclose agent-assisted imports and unavailable turn completion.\n\n**Provenance limitation:** validation checks caller-supplied `role`, `sourceTool`, conversation UUID, and text—not evidence that `read_agent_conversation` actually produced them. “Actual assistant text” therefore depends on a trusted importer; the store itself cannot authenticate that claim.\n\n**Material bug:** concurrent `importSnapshots` calls can lose messages. Both can read the same previous store, merge independently, and rename their replacement files; the last rename discards the other import. Atomic rename prevents partial reads, not lost updates.\n\nIdentical repeated messages are collapsed by conversation/text hash, explicitly acknowledged in code; this is not a complete message-occurrence history.\n\nAssistant text uses `textContent`, avoiding HTML injection. The server defaults to loopback but has no authentication; configuring a publicly reachable host exposes conversation text and command evidence.\n\nNo source changes or tests performed.",
+        "sourceTool": "read_agent_conversation",
+        "importedAt": "2026-11-14T10:52:23.641Z",
+        "contentId": "2322c4744539dac8681300245f9d03986821af04481f303da075790e623e2ce2",
+        "delivery": "agent-assisted snapshot import; not live tokens",
+        "sourceMessageId": null,
+        "generationTimestamp": null
+      },
+      "id": 11,
+      "capturedAt": "2026-11-14T10:52:23.787Z",
+      "captureLatencyMs": null
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 **Gate: STOP. No Phase 2 work or virtual-world changes.**
 
-Outcome: working **workspace-exec live fallback**, not a verified native 8090 agent stream. Native streaming is authentication-blocked, not demonstrated impossible. Agent-wide turn-completion updates and steering have **not** been demonstrated. Those parts of Phase 1 remain blocked pending authenticated access.
+Outcome: working **workspace-exec live fallback plus genuine model-written conversation snapshots**, not a verified native 8090 model-token stream. Native streaming is authentication-blocked, not demonstrated impossible. Agent-wide turn-completion updates and steering have **not** been demonstrated. Those parts of Phase 1 remain blocked pending authenticated access.
 
 ## Run the inspector
 
@@ -24,7 +24,7 @@ The workload hashes real implementation files and runs real tests, emitting expl
 
 Optional settings: `INSPECTOR_PORT`, `INSPECTOR_HOST` (loopback by default), `INSPECTOR_DATA_DIR`, and `COMMAND_AGENT_MAP_PATH`. The identity file is JSON mapping **command UUIDs → confirmed conversation labels**. Replace it atomically. Generation IDs are insufficient: a parent and subagent shared the same generation in the real test. `AGENT_MAP` is only appropriate where a generation-to-agent association is independently established; otherwise labels remain `workspace-generation:…`.
 
-Read-only endpoints: `/events` (SSE), `/api/events`, `/api/metrics`. The browser has agent/generation filtering, pause/resume, raw-event inspection, evidence export and disconnection/replay-gap indicators. Steering is deliberately disabled. Serve the HTML from this local server; the Knowledge Base HTML copy does not supply a capture backend or cross-origin access.
+Read-only endpoints: `/events` (SSE), `/api/events`, `/api/metrics`. The browser has a prominent model-output panel, agent/generation filtering, pause/resume, raw-event inspection, evidence export and disconnection/replay-gap indicators. Steering is deliberately disabled. Serve the HTML from this local server; the Knowledge Base HTML copy does not supply a capture backend or cross-origin access.
 
 ## Verified versus unverified
 
@@ -35,6 +35,7 @@ Read-only endpoints: `/events` (SSE), `/api/events`, `/api/metrics`. The browser
 | Timestamps/latency | Capture timestamps on every event; lifecycle producer timestamps from metadata; output latency only measurable for explicit producer-stamped test markers |
 | Two actual agents at once | Parent and subagent commands overlapped 7.278159 seconds in one shared workspace; outputs from both captured |
 | Arbitrary agents across workspaces/users | Not verified; no global discovery/credentials available |
+| Model-written assistant progress and answers | Verified via `read_agent_conversation` and agent-assisted snapshot import; not continuous/token-by-token streaming |
 | Native tool calls, content deltas, turn end | Shipped frontend contains these contracts; authenticated delivery unverified |
 | Agent running/idle state | Not inferred from shell activity; unavailable in fallback |
 | Genuine agent-turn completion fallback | Not available from shell logs. Tool completion is **not** turn completion |
@@ -55,6 +56,27 @@ Browser navigation to the current conversation redirected to `/auth`. A read-onl
 
 Frontend acknowledgement distinguishes accepted/queued/started from later `user_message`/`steer_message` consumption. Thus **acceptance is not proof of consumption**, and neither proves the model complied. Need a controlled authenticated test to distinguish mid-turn handling, tool-boundary handling and between-turn delivery. Static contracts may change; they are not supported public API guarantees. See `evidence/static-contracts.json` for exact bundle URL, SHA-256 and snippets; `evidence/native-probe.json` for the runtime rejection.
 
+## Model outputs: verified snapshot fallback
+
+The inspector now shows **five genuine assistant messages** from conversation `a538b4eb-cf24-5ff4-a694-7f8973b4d0b0`, read with the supported `read_agent_conversation` tool. They include historical audit progress messages and a fresh model-written review of the Phase 1 inspector. This is user-visible assistant text, **not private reasoning**, and not shell stdout.
+
+Delivery is **agent-assisted import**: the agent reads a conversation, copies selected assistant messages into JSON, and runs the importer. The server watches that local snapshot file and delivers new entries over its existing SSE feed. This is **not autonomous conversation polling, a direct native model subscription, or token-by-token streaming**. The app cannot invoke 8090 agent tools itself. Refresh requires another supported read/import. No permission or authentication barrier is bypassed.
+
+Reproduce the selected genuine historical snapshots:
+
+```sh
+# Inspector running with its default data directory:
+node phase1/model-snapshots.mjs phase1/evidence/model-output-snapshot-input.json
+# Custom destination must match MODEL_SNAPSHOT_FILE or the server's data directory:
+node phase1/model-snapshots.mjs INPUT.json .phase1-data/models/model-snapshots.json
+```
+
+Input is an array of `{role:"assistant", sourceTool:"read_agent_conversation", conversationId:"UUID", text:"unaltered assistant text"}`. `importedAt` is stamped by the importer; server `capturedAt` is separate. The reader did not supply message event IDs or per-message generation timestamps, so both are left unknown. **No model-generation latency or turn-completion state is inferred.** Content hashes deduplicate repeated reads but also merge identical repeated messages; this is not a full occurrence history.
+
+`MODEL_SNAPSHOT_FILE` defaults to `model-snapshots.json` inside the server's data directory. Imports retain 100 messages and use an exclusive writer lock plus atomic file replacement. A crashed importer can leave a lock; verify it has stopped before manually removing the lock. Snapshot schema validation checks supplied fields, **not cryptographic provenance**: the local importer must be trusted to copy genuine tool results. Text is rendered with `textContent`, not HTML. Test fixtures are labeled and are not used as live evidence.
+
+`evidence/model-output-snapshot-input.json` contains selected text copied from the supported reader; `evidence/model-output-capture.json` verifies all five imported messages reached the inspector unaltered. The review describes the pre-lock version; its concurrent-import issue was subsequently fixed and covered by a test. The demonstration recording shows snapshots appearing on import, **not live model generation**.
+
 ## Empirical measurements
 
 `evidence/live-measurement.json` contains 236 genuine producer-stamped outputs: 220 parent verification markers and 16 second-agent audit markers. All expected markers were captured. Capture latency: **p50 104 ms, p95 242 ms, max 255 ms** with 250 ms polling. Lifecycle-event p95 was **234 ms**. Shared producer/capture clocks make these local capture measurements meaningful; they do not include model/server event production or platform-to-workspace latency.
@@ -67,7 +89,7 @@ The initial collector recorded **143 transient read errors** and no persistence 
 
 ## Reliability and security limits
 
-- Eight automated tests cover deduplication, history labeling, concurrent generations, malformed metadata recovery, truncation, UTF-8, explicit command identity, read-only routes and SSE reconnect/restart behavior.
+- Fourteen automated tests cover deduplication, history labeling, concurrent generations, malformed metadata recovery, truncation, UTF-8, explicit command identity, read-only routes, SSE reconnect/restart behavior, model snapshot validation/deduplication, concurrent import serialization and exact assistant-text delivery.
 - Memory retains 2,000 events, UI renders the latest 100. SSE reconnect replays retained events; window overruns/restarts explicitly signal gaps. Disk journal is evidence storage, **not durable replay**. A restart changes stream epoch and cannot silently reuse a stale cursor.
 - Polling adds up to roughly one poll interval plus filesystem/read scheduling delay. Workspace outages and missing/deleted/capped logs lose signals; all non-exec tools and model deltas remain invisible.
 - Filesystem scanning scales with retained command directories; disk journals grow without rotation. This is a bounded hackathon proof, not fleet infrastructure.

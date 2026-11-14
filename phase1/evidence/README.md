@@ -8,7 +8,15 @@
 - Initial run captured **236/236 expected producer-stamped markers**: p50 **104 ms**, p95 **242 ms**, maximum **255 ms**, at 250 ms polling.
 - Hardened follow-up captured **40/40 markers**, p95 **248 ms**, with **zero capture or persistence errors**.
 - Initial collector: average scan **5.41 ms**, RSS **71.2 MiB**, CPU ~**1.68% of one core**. This is resource overhead, not a controlled agent-throughput comparison.
-- **8 automated tests pass**, covering capture, reconnect, restart gaps, malformed metadata, UTF-8 and identity handling. Browser verified the live inspector and disabled steering control.
+- **14 automated tests pass**, covering capture, reconnect, restart gaps, malformed metadata, UTF-8 and identity handling. Browser verified the live inspector and disabled steering control.
+
+## Model-output extension
+- **Five genuine assistant messages** are now visible in the model-output panel, including audit progress and a fresh model-written reviewer response.
+- Source: supported `read_agent_conversation` reads of conversation `a538b4eb-cf24-5ff4-a694-7f8973b4d0b0`. Selected text is copied without rewriting and imported by the agent.
+- **Snapshot delivery, not live model tokens**: new imports are pushed to the UI through the inspector's SSE feed, but native model generation is not subscribed to. Refresh requires another read/import.
+- Import/capture timestamps are real. Per-message generation timestamps, native event IDs and model-generation latency are unavailable and not invented. This does not establish agent-turn completion.
+- Provenance depends on the trusted importer; supplied metadata is not independently signed. The committed source text and captured events provide auditable evidence of this demonstration, not an authentication mechanism.
+- The reviewer identified a concurrent-writer bug in the first version. It is fixed with a writer lock and covered by tests; the original response remains unedited as a historical snapshot.
 
 ## Not verified / unavailable
 - Native SSE requests returned **401 SofaNotAuthenticated**; browser redirected to login. This proves an authentication barrier, not that streaming is impossible.
