@@ -1,0 +1,49 @@
+/* Scoped to this module: no global tokens, resets, or external assets. */
+.perspective-voices {
+  --pv-ink: #edf2ff;
+  --pv-muted: #b9c5dd;
+  color: var(--pv-ink);
+  background: linear-gradient(135deg, #151d32, #101727);
+  border: 1px solid #3b4965;
+  border-radius: 20px;
+  padding: clamp(18px, 3vw, 30px);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.55;
+  box-shadow: 0 14px 38px #080e1a30;
+  isolation: isolate;
+}
+.perspective-voices .pv-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px; }
+.perspective-voices .pv-eyebrow { color: #9debd2; text-transform: uppercase; font-size: .72rem; font-weight: 750; letter-spacing: .11em; margin: 0 0 8px; }
+.perspective-voices h2 { color: var(--pv-ink); font-size: clamp(1.35rem, 3vw, 1.85rem); line-height: 1.2; margin: 0; letter-spacing: -.025em; }
+.perspective-voices .pv-scenario { margin: 10px 0 0; color: var(--pv-muted); font-size: .95rem; }
+.perspective-voices .pv-scenario strong { color: #fff; }
+.perspective-voices .pv-badge { border: 1px solid #607190; border-radius: 999px; padding: 5px 12px; font-size: .75rem; white-space: nowrap; }
+.perspective-voices .pv-disclaimer { margin: 20px 0; padding: 12px 14px; border-left: 3px solid #a5bfff; background: #a5bfff0a; color: var(--pv-muted); font-size: .85rem; }
+.perspective-voices .pv-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.perspective-voices .pv-card { --pv-accent: #ffd48c; display: flex; flex-direction: column; min-width: 0; padding: 18px; background: #1d273d; border: 1px solid #46536d; border-radius: 14px; position: relative; }
+.perspective-voices .pv-finance { --pv-accent: #bdadff; }
+.perspective-voices .pv-engineering { --pv-accent: #88e1d6; }
+.perspective-voices .pv-selected { border-color: var(--pv-accent); box-shadow: inset 0 3px 0 var(--pv-accent); }
+.perspective-voices .pv-person { display: flex; align-items: center; gap: 12px; }
+.perspective-voices .pv-avatar { display: grid; place-items: center; flex-shrink: 0; width: 54px; height: 54px; font-size: 2rem; border-radius: 18px 18px 18px 5px; background: #ffffff0d; border: 2px solid var(--pv-accent); transform: rotate(-4deg); }
+.perspective-voices .pv-finance .pv-avatar { border-radius: 50%; transform: rotate(4deg); }
+.perspective-voices .pv-engineering .pv-avatar { border-radius: 12px 22px 12px 22px; transform: rotate(-2deg); }
+.perspective-voices h3 { margin: 0; color: var(--pv-ink); font-size: 1rem; line-height: 1.35; }
+.perspective-voices h3 span { display: block; font-size: .78rem; font-weight: 500; color: var(--pv-muted); }
+.perspective-voices .pv-tone { margin: 4px 0 0; color: var(--pv-accent); font-size: .72rem; font-weight: 700; }
+.perspective-voices .pv-script-label { margin: 20px 0 6px; text-transform: uppercase; letter-spacing: .06em; color: var(--pv-muted); font-size: .65rem; }
+.perspective-voices blockquote { margin: 0 0 18px; padding: 0; border: 0; font-size: .9rem; color: var(--pv-ink); flex: 1; }
+.perspective-voices button { appearance: none; cursor: pointer; font: inherit; font-size: .8rem; line-height: 1.4; min-height: 44px; padding: 10px 13px; background: #25324c; border: 1px solid #6c7c9a; border-radius: 9px; color: var(--pv-ink); }
+.perspective-voices button:hover:not(:disabled) { background: #354666; }
+.perspective-voices button:disabled { cursor: not-allowed; color: #a6b1c7; background: #202a3e; border-color: #43516b; }
+.perspective-voices button:focus-visible, .perspective-voices a:focus-visible { outline: 3px solid #e5efff; outline-offset: 4px; }
+.perspective-voices .pv-select { width: 100%; text-align: left; }
+.perspective-voices .pv-select[aria-pressed='true'] { color: var(--pv-accent); border-color: var(--pv-accent); }
+.perspective-voices .pv-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; margin-top: 20px; }
+.perspective-voices .pv-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.perspective-voices .pv-evidence { color: #acd2ff; text-decoration: underline; text-underline-offset: 4px; font-size: .85rem; padding: 10px 0; }
+.perspective-voices .pv-status { margin: 12px 0 0; min-height: 1.5em; font-size: .78rem; color: var(--pv-muted); }
+@keyframes pv-voice-pulse { 50% { box-shadow: 0 0 0 5px #ffffff15; } }
+.perspective-voices .pv-speaking { animation: pv-voice-pulse 1.2s ease-in-out infinite; }
+@media (max-width: 760px) { .perspective-voices .pv-cards { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .perspective-voices .pv-speaking { animation: none; } }
