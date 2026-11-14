@@ -14,7 +14,7 @@ export function transition(current:Aggregate,actor:Principal,command:Command):Ag
  const evidenceComplete=()=>{ sourceAccessible(); if(a.work.evidence.some(e=>!e.complete)) fail('unverifiable_evidence','Required evidence is incomplete.',409); };
  if(command.operation==='simulate_change'||command.operation==='simulate_outage'||command.operation==='simulate_revoke') {
   coordinator(actor);
-  if(command.operation==='simulate_change') { a.work.sourceVersion++; a.work.evidence[0].version++; a.work.evidence[0].content+='\nUpdated fixture requirement: source evidence changed.'; }
+  if(command.operation==='simulate_change') { a.work.sourceVersion++; a.work.evidence[0].version++; a.work.evidence[0].content+='\nSimulated policy addendum: custom payment terms require an explicit Finance review of the exception. This is a local fixture revision, not a committed policy update.'; }
   if(command.operation==='simulate_outage') { if(typeof p.available!=='boolean') fail('validation','Availability must be a boolean.'); a.work.sourceAvailable=p.available; }
   if(command.operation==='simulate_revoke') { if(typeof p.permitted!=='boolean') fail('validation','Permission must be a boolean.'); a.work.evidence.forEach(e=>e.permitted=p.permitted as boolean); }
   record(command.operation,'Fixture source condition changed.');

@@ -2,7 +2,7 @@ export type Kind = 'human' | 'agent';
 export type Disposition = 'advice' | 'support' | 'request_changes';
 export type Outcome = 'approve' | 'request_changes';
 export interface Principal { id: string; name: string; kind: Kind; coordinator: boolean; }
-export interface Evidence { id: string; title: string; content: string; version: number; complete: boolean; permitted: boolean; }
+export interface Evidence { id: string; title: string; content: string; version: number; complete: boolean; permitted: boolean; sourceRef?: string; }
 export interface Snapshot { id: string; digest: string; retrievedAt: string; evidence: Evidence[]; sourceVersion: number; }
 export interface Work { id: string; title: string; description: string; status: string; sourceVersion: number; sourceAvailable: boolean; evidence: Evidence[]; }
 export interface Assignment { id: string; reviewerId: string; role: string; question: string; responsibility: 'advisory' | 'required'; generation: number; }
@@ -17,8 +17,8 @@ export interface FactoryView extends Aggregate { principal: Principal; principal
 export interface Command { operation: 'create_round'|'configure_round'|'publish'|'feedback'|'signoff'|'decide'|'reassign'|'cancel'|'refresh'|'save_draft'|'discard_draft'|'simulate_change'|'simulate_outage'|'simulate_revoke'; expectedVersion: number; expectedPrincipalId: string; idempotencyKey: string; roundId?: string; payload: Record<string,unknown>; }
 export class FactoryError extends Error { constructor(public code: string, message: string, public status = 400) { super(message); } }
 export const principals: Principal[] = [
- { id:'maya', name:'Maya · coordinator', kind:'human', coordinator:true },
- { id:'alex', name:'Alex · security', kind:'human', coordinator:false },
- { id:'river', name:'River · maintainability', kind:'human', coordinator:false },
+ { id:'maya', name:'Maya · Sales Operations', kind:'human', coordinator:true },
+ { id:'alex', name:'Alex · Finance', kind:'human', coordinator:false },
+ { id:'river', name:'River · Engineering', kind:'human', coordinator:false },
  { id:'observer', name:'Observer · agent', kind:'agent', coordinator:false }
 ];
