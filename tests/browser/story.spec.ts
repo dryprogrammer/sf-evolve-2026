@@ -17,7 +17,7 @@ test('caption-only fallback and Needs you action open inspectable source-linked 
  await expect(inspector.getByRole('heading',{name:'Input → judgment → implementation → verification',exact:true})).toBeVisible();
  const seed=inspector.getByRole('link',{name:'Fictional renewal policy · committed source',exact:true});
  await expect(seed).toHaveAttribute('href',/\/blob\/5ba2f24f874ff933fd4000c9c409f7aba38e5cc4\/docs\/scenario\/renewal-policy.md$/);
- await expect(inspector.getByText(/Executable acceptance example:/)).toContainText('standard terms → 20%; custom terms → 15%');
+ await expect(inspector.locator('p').filter({hasText:'Executable acceptance example:'})).toContainText('standard terms → 20%; custom terms → 15%');
  await expect(inspector.getByRole('link',{name:'Inspect committed seed source',exact:true})).toHaveCount(2);
  await page.keyboard.press('Escape');
  await page.getByRole('link',{name:'Inspect source evidence',exact:false}).click();
