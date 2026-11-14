@@ -6,7 +6,7 @@ import { CommandCapture } from './capture.mjs';
 
 const dir = dirname(fileURLToPath(import.meta.url));
 export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/commands',interval=250,
-  dataDir=join(dir,'../.phase1-data'),agentMap={},includeHistory=false}={}) {
+  dataDir=join(dir,'../.phase1-data'),agentMap={},commandAgentMap={},identityFile=null,includeHistory=false}={}) {
   await mkdir(dataDir,{recursive:true,mode:0o700});
   const events=[], clients=new Set(); let seq=0, persistence=Promise.resolve(), writeErrors=0;
   const began=Date.now(), initialCpu=process.cpuUsage();
@@ -24,7 +24,7 @@ export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/comm
     }
     return item;
   };
-  const capture = new CommandCapture({root,emit,agentMap,includeHistory});
+  const capture = new CommandCapture({root,emit,agentMap,commandAgentMap,includeHistory});
   const metrics = () => ({mode:'workspace-exec fallback',uptimeMs:Date.now()-began,
     eventCount:seq,retainedEvents:events.length,clients:clients.size,writeErrors,
     cpu:process.cpuUsage(initialCpu),rssBytes:process.memoryUsage().rss,
@@ -55,7 +55,15 @@ export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/comm
   });
   await capture.scan();
   let scanning=false;
-  const timer=setInterval(async()=>{if(scanning)return;scanning=true;try{await capture.scan();}finally{scanning=false;}},interval);
+  const timer=setInterval(async()=>{if(scanning)return;scanning=true;try{
+      if(identityFile) {
+        try {
+          capture.commandAgentMap=JSON.parse(await readFile(identityFile,'utf8'));
+          // Explicit command-to-conversation binding; generations can be shared by subagents.
+          for(const e of events) if(capture.commandAgentMap[e.commandId])e.agent=capture.commandAgentMap[e.commandId];
+        } catch {capture.metrics.errors++;}
+      }
+      await capture.scan();}finally{scanning=false;}},interval);
   const heartbeat=setInterval(()=>{for(const res of clients)res.write(': heartbeat\n\n');},5000);
   await new Promise(resolve=>server.listen(port,host,resolve));
   return {server,capture,events,emit,metrics,url:`http://${host}:${server.address().port}`,
@@ -65,7 +73,7 @@ export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/comm
 if(process.argv[1]===fileURLToPath(import.meta.url)) {
   const app=await startInspector({port:Number(process.env.INSPECTOR_PORT??4318),
     host:process.env.INSPECTOR_HOST??'127.0.0.1',root:process.env.COMMAND_ROOT??'/tmp/commands',
-    agentMap:JSON.parse(process.env.AGENT_MAP??'{}'),includeHistory:process.env.INCLUDE_HISTORY==='1'});
+    agentMap:JSON.parse(process.env.AGENT_MAP??'{}'),identityFile:process.env.COMMAND_AGENT_MAP_PATH??null,includeHistory:process.env.INCLUDE_HISTORY==='1'});
   console.log(`Live inspector: ${app.url} (read-only; workspace exec fallback)`);
   for(const sig of ['SIGINT','SIGTERM'])process.on(sig,async()=>{await app.close();process.exit(0);});
 }

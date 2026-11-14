@@ -1,0 +1,22 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {mkdtemp,mkdir,writeFile,appendFile,rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {CommandCapture} from '../capture.mjs';
+import {startInspector} from '../server.mjs';
+async function fixture(t){const root=await mkdtemp(join(tmpdir(),'phase1-test-'));t.after(()=>rm(root,{recursive:true,force:true}));return root;}
+async function command(root,id,extra={}){await mkdir(join(root,id),{recursive:true});const meta={command_id:id,generation_id:'g1',summary:'test fixture',status:'running',started_at:new Date().toISOString(),...extra};await writeFile(join(root,id,'metadata.json'),JSON.stringify(meta));await writeFile(join(root,id,'output.log'),'');return meta;}
+test('captures genuine lifecycle file changes once; output time remains unknown',async t=>{
+ const root=await fixture(t),events=[];const c=new CommandCapture({root,emit:e=>events.push(e),agentMap:{g1:'agent-a'}});await c.scan();const meta=await command(root,'c1');await c.scan();await appendFile(join(root,'c1','output.log'),'actual stdout');await c.scan();meta.status='exited';meta.exit_code=0;meta.ended_at=new Date().toISOString();await writeFile(join(root,'c1','metadata.json'),JSON.stringify(meta));await c.scan();await c.scan();
+ assert.deepEqual(events.map(e=>e.type),['tool.started','tool.output','tool.completed']);assert.equal(events[1].sourceAt,null);assert.equal(events[0].agent,'agent-a');assert.equal(events[2].payload.exitCode,0);
+});
+test('baseline does not mislabel history as live, including running output',async t=>{const root=await fixture(t);await command(root,'old',{status:'exited'});const events=[];const c=new CommandCapture({root,emit:e=>events.push(e)});await c.scan();assert.equal(events.length,0);});
+test('explicit history is labeled and unmapped generations are not claimed as agents',async t=>{const root=await fixture(t);await command(root,'old',{status:'exited'});const events=[];const c=new CommandCapture({root,emit:e=>events.push(e),includeHistory:true});await c.scan();assert.equal(events[0].historical,true);assert.match(events[0].agent,/workspace-generation:/);});
+test('concurrent generations remain separate and partial metadata recovers',async t=>{const root=await fixture(t),events=[];const c=new CommandCapture({root,emit:e=>events.push(e)});await c.scan();await command(root,'a');await command(root,'b',{generation_id:'g2'});await writeFile(join(root,'b','metadata.json'),'{');await c.scan();assert.equal(c.metrics.errors,1);await writeFile(join(root,'b','metadata.json'),JSON.stringify({command_id:'b',generation_id:'g2',status:'running'}));await c.scan();assert.equal(new Set(events.map(e=>e.generationId)).size,2);});
+test('bounded chunks and truncation are explicit',async t=>{const root=await fixture(t),events=[];const c=new CommandCapture({root,emit:e=>events.push(e),maxChunk:4});await c.scan();await command(root,'a');await appendFile(join(root,'a','output.log'),'abcdefghij');await c.scan();assert.deepEqual(events.filter(e=>e.type==='tool.output').map(e=>e.payload.text),['abcd','efgh','ij']);await writeFile(join(root,'a','output.log'),'z');await c.scan();assert.ok(events.some(e=>e.type==='capture.log_reset'));});
+test('SSE sends events and reconnect cursor prevents duplicates; mutation denied',async t=>{
+ const root=await fixture(t);const app=await startInspector({port:0,root,dataDir:join(root,'data'),interval:10000});t.after(()=>app.close());const first=app.emit({type:'test.fixture',agent:'fixture',sourceAt:null,payload:{}});app.emit({type:'test.fixture',agent:'fixture',sourceAt:null,payload:{}});
+ const abort=new AbortController();const response=await fetch(app.url+'/events',{headers:{'Last-Event-ID':String(first.id)},signal:abort.signal});assert.equal(response.headers.get('content-type'),'text/event-stream');const reader=response.body.getReader();const text=new TextDecoder().decode((await reader.read()).value);assert.match(text,/id: 2/);assert.doesNotMatch(text,/id: 1\n/);await reader.cancel();abort.abort();
+ assert.equal((await fetch(app.url+'/steer',{method:'POST'})).status,405);const metrics=await(await fetch(app.url+'/api/metrics')).json();assert.equal(metrics.capabilities.agentTurnCompletion,'unavailable in this fallback');assert.equal(app.events[0].captureLatencyMs,null);
+});

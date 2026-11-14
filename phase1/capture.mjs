@@ -3,8 +3,8 @@ import { join } from 'node:path';
 
 // Read-only fallback: these are real exec tool files, not agent-wide state.
 export class CommandCapture {
-  constructor({root, emit, agentMap = {}, includeHistory = false, maxChunk = 16384}) {
-    Object.assign(this, {root, emit, agentMap, includeHistory, maxChunk});
+  constructor({root, emit, agentMap = {}, commandAgentMap = {}, includeHistory = false, maxChunk = 16384}) {
+    Object.assign(this, {root, emit, agentMap, commandAgentMap, includeHistory, maxChunk});
     this.seen = new Map(); this.firstScan = true;
     this.metrics = {scans:0, errors:0, bytes:0, scanMs:0, maxScanMs:0};
   }
@@ -23,7 +23,7 @@ export class CommandCapture {
         if (!old && this.firstScan && !this.includeHistory) {
           this.seen.set(id,{offset:size,status:meta.status}); continue;
         }
-        const agent = this.agentMap[meta.generation_id] ?? `workspace-generation:${meta.generation_id}`;
+        const agent = this.commandAgentMap[meta.command_id] ?? this.agentMap[meta.generation_id] ?? `workspace-generation:${meta.generation_id}`;
         const base = {agent, generationId:meta.generation_id, commandId:meta.command_id,
           source:'workspace-exec', summary:meta.summary, historical:!old && this.firstScan};
         const state = old ?? {offset:0,status:null};
