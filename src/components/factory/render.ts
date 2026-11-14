@@ -333,7 +333,8 @@ function reviewSign(ctx: CanvasRenderingContext2D, x: number, y: number, w: numb
     return;
   }
   const labels: Record<string, string> = {
-    draft: 'Draft', in_review: 'In review', 'in-review': 'In review',
+    draft: 'Draft', open: 'Open', cancelled: 'Cancelled',
+    in_review: 'In review', 'in-review': 'In review',
     approved: 'Approved', changes_requested: 'Changes requested',
     'changes-requested': 'Changes requested', pending: 'Pending',
   };
@@ -571,6 +572,7 @@ export function drawFactory(ctx: CanvasRenderingContext2D, state: SceneState): v
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'source-over';
     ctx.imageSmoothingEnabled = false;
+    ctx.filter = 'none';
     ctx.shadowBlur = 0;
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 0;
@@ -601,7 +603,7 @@ export function drawFactory(ctx: CanvasRenderingContext2D, state: SceneState): v
       { id: 'robot', x: 288, y: 261, facing: 'down' },
       { id: 'robot', x: 850, y: 518, facing: 'left' },
     ];
-    const principal = state.principalId in PALETTES ? state.principalId as HumanId : 'observer';
+    const principal = Object.hasOwn(PALETTES, state.principalId) ? state.principalId as HumanId : 'observer';
     npcs.forEach((npc, index) => {
       if (npc.id === principal) return;
       // A tiny head/body idle shift, not fictitious activity or live presence.
