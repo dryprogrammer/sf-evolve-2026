@@ -1,0 +1,11 @@
+{
+  "capturedAt": "2026-11-14T21:49:17Z",
+  "scope": "Slide preparation repository checks; not the Drift Room app snapshot",
+  "repositories": [
+    {"full_name":"dryprogrammer/sf-evolve-2026","private":true,"default_branch":"main","local_origin":"https://github.com/dryprogrammer/sf-evolve-2026.git","main_sha":"fdb3778c32d7bbc6328be7f7c6e0334b361e15c7"},
+    {"full_name":"dryprogrammer/sf-evolve-2026-demo","private":false,"default_branch":"main","local_origin":"https://github.com/dryprogrammer/sf-evolve-2026-demo.git","main_sha":"366acb965ae14b0e78af04a53bab9f2c41537a83"}
+  ],
+  "implementation": {"pr":6,"url":"https://github.com/dryprogrammer/sf-evolve-2026/pull/6","state":"OPEN","head":"8090/chat-enterprise-handoff-c72418","head_sha":"48b1ec0cdf75ab2f07b7c4098e75dc26560f3705","base":"8090/wo-1-collaboration-mvp-9fd572"},
+  "historical_report": {"conversation_id":"eb8fa6a9-845d-476a-bdbe-5566ca5f0887","claim":"Both existing workspace repository folders currently point their origin to dryprogrammer/sf-evolve-2026-demo, which is PUBLIC.","status":"Reported in an earlier workspace; not reproduced in this workspace"},
+  "limitations":["No assertion of root cause or earliest divergence","No completed recorded reviewer output was available during initial slide preparation","main and implementation branch differ because PRs are stacked; this alone is not a defect"]
+}
