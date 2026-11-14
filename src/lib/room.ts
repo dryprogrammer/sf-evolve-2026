@@ -134,7 +134,10 @@ export class RoomService {
     // Join first (broadcast to others), then hand this client a snapshot at a known sequence.
     this.heartbeat(session);
     this.subscribers.add(subscriber);
-    send({ type: 'hello', instanceId: this.instanceId, sessionId: session.sessionId, seq: this.seq, presence: this.snapshot() });
+    if (!send({ type: 'hello', instanceId: this.instanceId, sessionId: session.sessionId, seq: this.seq, presence: this.snapshot() })) {
+      close();
+      this.subscribers.delete(subscriber);
+    }
     return () => { this.subscribers.delete(subscriber); };
   }
   subscriberCount() { return this.subscribers.size; }
