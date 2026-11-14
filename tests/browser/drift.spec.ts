@@ -31,8 +31,9 @@ function fixture(): DriftSnapshot {
  };
 }
 const inspector = (page: Page) => page.getByRole('region', { name: 'Finding inspector', exact: true });
+const stationLabels: Record<ReviewerRole, string> = { intent: 'Intent reviewer', delivery: 'Delivery reviewer', skeptic: 'Skeptic' };
 const station = (page: Page, role: ReviewerRole) => page.getByRole('navigation', { name: 'Reviewer stations', exact: true })
- .getByRole('button', { name: new RegExp(role, 'i') });
+ .getByRole('button', { name: stationLabels[role], exact: true });
 const save = (page: Page) => page.getByRole('button', { name: 'Select proposed correction', exact: false });
 const rationale = (page: Page) => page.getByLabel('Why select this correction?', { exact: true });
 async function mockSnapshot(page: Page, snapshot: DriftSnapshot) {
@@ -68,6 +69,21 @@ test.describe('Drift Room — MOCKED GET snapshot, actual browser/localStorage',
    await expect(inspector(page)).toContainText(review.dissent);
    await expect(inspector(page).getByText('Literal quote found in collected content', { exact: true })).toHaveCount(2);
   }
+ });
+ test('replay is explicitly labeled recorded and cannot launch live agents or write APIs', async ({ page }) => {
+  const apiRequests: { path: string; method: string }[] = [];
+  page.on('request', request => {
+   const path = new URL(request.url()).pathname;
+   if (path.startsWith('/api/')) apiRequests.push({ path, method: request.method() });
+  });
+  await mockSnapshot(page, fixture());
+  const replay = page.getByRole('button', { name: /Replay/i });
+  await expect(replay).toBeEnabled();
+  await expect(replay).toHaveAccessibleName(/recorded/i);
+  await replay.click();
+  await expect(page.getByText('RECORDED REVIEW · NOT LIVE', { exact: true })).toBeVisible();
+  await expect(page.getByText('No live agents in this room.', { exact: true })).toBeVisible();
+  expect(apiRequests).toEqual([{ path: '/api/drift', method: 'GET' }]);
  });
  test('source drilldown preserves collected content and distinguishes digest from revision', async ({ page }) => {
   const snapshot = fixture(); await mockSnapshot(page, snapshot);

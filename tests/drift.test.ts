@@ -84,6 +84,11 @@ describe('Drift validation — synthetic input, real validator', () => {
   const snapshot = fixture(); finding(snapshot).citations[0].quote = quote;
   expect(() => validateSnapshot(snapshot)).toThrow();
  });
+ it('accepts a literal substring of available collected content even when absent from the excerpt', () => {
+  const snapshot = fixture(); snapshot.sources[0].excerpt = 'A different bounded excerpt.';
+  snapshot.reviews.forEach(review => { review.findings[0].citations[0].quote = 'Retain uncertainty.'; });
+  expect(validateSnapshot(snapshot)).toEqual(snapshot);
+ });
  it('rejects a quote present only in the excerpt, not collected content', () => {
   const snapshot = fixture(); snapshot.sources[0].content = 'Different collected content.';
   expect(() => validateSnapshot(snapshot)).toThrow();
@@ -155,7 +160,10 @@ describe('Drift decisions — mocked browser storage, real decision functions', 
   expect(readDecision(first)).toEqual(latest); expect(readDecision(second)).toEqual(other);
   expect(values.size).toBe(2);
  });
- it.each(['', ' ', '\n\t', 'x'.repeat(2001)])('rejects empty/overlong rationale without writing (length %s)', rationale => {
+ it.each([
+  { label: 'empty', rationale: '' }, { label: 'spaces', rationale: ' ' },
+  { label: 'whitespace', rationale: '\n\t' }, { label: '2001 characters', rationale: 'x'.repeat(2001) },
+ ])('rejects $label rationale without writing', ({ rationale }) => {
   const snapshot = fixture();
   expect(() => saveDecision(snapshot, snapshot.reviews[0], finding(snapshot), rationale)).toThrow();
   expect(storage.setItem).not.toHaveBeenCalled();
