@@ -1,8 +1,9 @@
 // Bridge for assistant text retrieved by the supported conversation-reading tool.
 // This is agent-assisted snapshot import, not autonomous API polling or token streaming.
-import {readFile,writeFile,rename,mkdir} from 'node:fs/promises';
+import {readFile,writeFile,rename,mkdir,open,unlink} from 'node:fs/promises';
 import {dirname} from 'node:path';
 import {randomUUID,createHash} from 'node:crypto';
+import {setTimeout as sleep} from 'node:timers/promises';
 import {fileURLToPath} from 'node:url';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export function validateMessage(message) {
@@ -21,6 +22,15 @@ export async function importSnapshots(input, destination) {
   if(!Array.isArray(input)||input.length<1||input.length>100)throw new Error('Import 1–100 assistant messages.');
   const now=new Date().toISOString();
   const messages=input.map(m=>validateMessage({...m,importedAt:now}));
+  await mkdir(dirname(destination),{recursive:true,mode:0o700});
+  // Atomic replace protects readers; this exclusive lock also protects concurrent writers.
+  let lock;
+  for(let attempt=0;attempt<40;attempt++){
+    try {lock=await open(destination+'.lock','wx',0o600);break;}
+    catch(e){if(e.code!=='EEXIST')throw e;await sleep(50);}
+  }
+  if(!lock)throw new Error('Snapshot importer is locked. If its process crashed, verify it stopped before removing the .lock file.');
+  try {
   let previous=[];
   try {
     const snapshot=JSON.parse(await readFile(destination,'utf8'));
@@ -35,6 +45,7 @@ export async function importSnapshots(input, destination) {
   const temp=destination+'.'+randomUUID()+'.tmp';
   await writeFile(temp,content,{mode:0o600});await rename(temp,destination);
   return {added,retained:Math.min(merged.size,100),delivery:'agent-assisted snapshot import; not live tokens'};
+  } finally {await lock.close();await unlink(destination+'.lock');}
 }
 export class ModelSnapshotCapture {
   constructor({file,emit}){this.file=file;this.emit=emit;this.seen=new Set();
