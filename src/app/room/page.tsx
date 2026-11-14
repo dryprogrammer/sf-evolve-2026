@@ -143,6 +143,11 @@ function Room({ session, onEnded }: { session: Stored; onEnded: (message: string
   // Authorized fetch-based SSE with reconnect; any interruption marks the view stale.
   useEffect(() => {
     let stop = false, controller: AbortController | undefined, attempt = 0;
+    // Browsers may keep an SSE reader pending across a network outage. Force a
+    // fresh authorized hello on either transition instead of leaving it half-open.
+    const networkChanged = () => { setLink('stale'); controller?.abort(); };
+    window.addEventListener('offline', networkChanged);
+    window.addEventListener('online', networkChanged);
     (async () => {
       while (!stop) {
         controller = new AbortController();
@@ -167,7 +172,11 @@ function Room({ session, onEnded }: { session: Stored; onEnded: (message: string
         await sleep(Math.min(5000, 400 * attempt));
       }
     })();
-    return () => { stop = true; controller?.abort(); };
+    return () => {
+      stop = true; controller?.abort();
+      window.removeEventListener('offline', networkChanged);
+      window.removeEventListener('online', networkChanged);
+    };
   }, [api, handle]);
 
   // Five-second heartbeats; periodic reconciliation covers any missed revision notifications.
