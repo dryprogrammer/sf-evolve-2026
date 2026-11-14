@@ -1,8 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
 const scene=(page:Page)=>page.getByRole('application',{name:'Walkable 2D sprite factory'});
 async function position(page:Page){return scene(page).evaluate(c=>({x:c.getAttribute('data-player-x'),y:c.getAttribute('data-player-y')}));}
-async function ready(page:Page){await page.goto('/');await expect(page.getByLabel('Walking as')).toBeEnabled();await expect(scene(page)).toHaveAttribute('data-player-x',/\d/);}
-test('default sprite floor reaches all five stations and opens a contextual inspector',async({page})=>{
+async function ready(page:Page){await page.goto('/');await page.getByRole('button',{name:'Factory floor',exact:true}).click();await expect(page.getByLabel('Walking as')).toBeEnabled();await expect(scene(page)).toHaveAttribute('data-player-x',/\d/);}
+test('optional sprite floor reaches all five stations and opens a contextual inspector',async({page})=>{
  test.setTimeout(60000);const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await ready(page);
  await expect(page.getByRole('heading',{name:'Good work starts on the floor.'})).toBeVisible();await expect(page.getByRole('dialog')).toHaveCount(0);
  for(const [name,id,x,y] of [['Assembly','assembly','496.0','336.0'],['Security','security','944.0','336.0'],['Maintainability','maintainability','208.0','528.0'],['Growth','growth','784.0','528.0'],['Economics','economics','1008.0','528.0']]){
