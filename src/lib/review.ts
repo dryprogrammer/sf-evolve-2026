@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { Aggregate, Assignment, Command, FactoryError, Principal, Round, principals } from './contracts';
 import { snapshot } from './fixtures';
+import { buildJudgmentAnswer, judgmentQuestion, supportsJudgmentDemo } from './judgment';
 function fail(code:string,message:string,status=400): never { throw new FactoryError(code,message,status); }
 export function text(value:unknown,max=4000):string { if(typeof value!=='string'||!value.trim()||[...value].length>max) fail('validation',`Text must contain 1–${max.toLocaleString()} characters.`); return value.trim(); }
 function human(id:unknown):string { const p=principals.find(p=>p.id===id&&p.kind==='human'); if(!p) fail('validation','Assign a known human participant.'); return p.id; }
@@ -39,6 +40,16 @@ export function transition(current:Aggregate,actor:Principal,command:Command):Ag
     if(a.rounds.some(x=>x.state==='open')) fail('conflict','There is already an open review for this work.',409);
     if(snapshot(a.work).digest!==r.snapshot.digest) fail('changed_evidence','Draft evidence changed. Cancel and start a new round.',409);
     r.state='open'; record('publish','Opened review with fixed role obligations.',r); break;
+   }
+   case 'judgment_answer': {
+    if(!supportsJudgmentDemo(a)) fail('unsupported','This prepared judgment question belongs only to the fictional renewal demo.');
+    if(r.state!=='open') fail('validation','Answer in an open review.');
+    if(actor.kind!=='human'||actor.id!=='alex'||!r.assignments.some(x=>x.reviewerId===actor.id&&x.responsibility==='required')) fail('denied','The assigned Finance reviewer must answer this business question.',403);
+    evidenceComplete();
+    if(p.evidenceDigest!==r.snapshot.digest||snapshot(a.work).digest!==r.snapshot.digest) fail('changed_evidence','The question basis changed. Start a fresh review before answering.',409);
+    const judgment=buildJudgmentAnswer(p.choice,p.reason,r.snapshot);
+    r.feedback.push({id:randomUUID(),actorId:actor.id,kind:'human',text:`${judgmentQuestion}\n${judgment.proposal}\nWhy: ${judgment.reason}`,disposition:'advice',createdAt:now,snapshotId:r.snapshot.id,judgment});
+    record('judgment_answer','Recorded Finance clarification and deterministic acceptance proposal; not a sign-off or code change.',r); break;
    }
    case 'feedback': {
     if(r.state!=='open') fail('validation','Feedback needs an open review.');
