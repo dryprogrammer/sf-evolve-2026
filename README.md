@@ -1,6 +1,6 @@
-# Andon for Software Factory
+# Software Factory Foreman
 
-An andon cord for agent work. Shows who's needed and why. Rejects sign-off when the evidence changes.
+Every sign-off gets a SHA-256. Change the source in Software Factory and the old approval gets a 409.
 
 Built at EVOLVE: 8090 AI Hackathon, Nov 13–14, 2026.
 
