@@ -10,7 +10,9 @@ export interface Feedback { id: string; actorId: string; kind: Kind; text: strin
 export interface Signoff { id: string; assignmentId: string; generation: number; actorId: string; outcome: Outcome; rationale: string; createdAt: string; snapshotId: string; }
 export interface Decision { actorId: string; outcome: Outcome; rationale: string; responses: Record<string,string>; verifiedAt?: string; digest?: string; createdAt: string; }
 export interface Round { id: string; state: 'draft'|'open'|'approved'|'changes_requested'|'cancelled'; snapshot: Snapshot; decisionMakerId: string; assignments: Assignment[]; feedback: Feedback[]; signoffs: Signoff[]; decision?: Decision; }
-export interface History { id: string; actorId: string; createdAt: string; type: string; roundId?: string; snapshotId?: string; detail: string; }
+/** How an actor was identified when an action was confirmed. Demo sessions are simulated identities, not authenticated accounts. */
+export interface Provenance { mode: 'fixture_persona' | 'demo_session'; sessionId?: string; }
+export interface History { id: string; actorId: string; createdAt: string; type: string; roundId?: string; snapshotId?: string; detail: string; provenance?: Provenance; }
 export interface Aggregate { version: number; work: Work; snapshot: Snapshot; rounds: Round[]; history: History[]; }
 export interface Draft { text: string; snapshotId: string; version: number; }
 export interface FactoryView extends Aggregate { principal: Principal; principals: Principal[]; draft: Draft | null; sourceMode: 'fixture' | 'factory'; }

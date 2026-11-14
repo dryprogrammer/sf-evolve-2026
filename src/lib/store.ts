@@ -1,9 +1,9 @@
 import { PGlite } from '@electric-sql/pglite';
 import { createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { mkdirSync } from 'node:fs';
 import path from 'node:path';
-import { Aggregate, Command, Draft, FactoryError, FactoryView, Principal, principals } from './contracts';
+import { Aggregate, Command, Draft, FactoryError, FactoryView, Principal, principals, type Provenance } from './contracts';
 import { seed, snapshot } from './fixtures';
 import { configuredSource, type EvidenceSource } from './factory-source';
 import { canonical } from './canonical';
@@ -11,8 +11,9 @@ import { transition } from './review';
 
 export class FactoryStore {
  readonly db:PGlite;
- private ready:Promise<void>;
- private scope:string;
+ readonly ready:Promise<void>;
+ /** Project/work room key: every aggregate, snapshot, draft and receipt is scoped by it. */
+ readonly scope:string;
  constructor(directory?:string, private source?:EvidenceSource) {
   this.scope=source?.scope??'fixture-project:DEMO-1';
   if(directory) mkdirSync(path.dirname(path.resolve(directory)),{recursive:true});
@@ -20,7 +21,8 @@ export class FactoryStore {
   this.ready=this.initialize();
  }
  private async initialize() {
-  const sql=await readFile(path.join(process.cwd(),'migrations/001_initial.sql'),'utf8'); await this.db.exec(sql);
+  const directory=path.join(process.cwd(),'migrations');
+  for(const file of (await readdir(directory)).filter(f=>f.endsWith('.sql')).sort()) await this.db.exec(await readFile(path.join(directory,file),'utf8'));
   const found=await this.db.query('SELECT scope FROM factory_state WHERE scope=$1',[this.scope]);
   if(!found.rows.length) {
    const initial=seed();
@@ -58,7 +60,7 @@ export class FactoryStore {
   if(denied){ for(const evidence of [a.work.evidence,a.snapshot.evidence,...a.rounds.map(r=>r.snapshot.evidence)]) for(const e of evidence){ e.content=''; e.title='Restricted evidence'; e.permitted=false; } a.rounds=[]; a.history=a.history.filter(e=>e.type.startsWith('simulate_')); }
   return {...a,principal:actor,principals,draft:denied?null:draft,sourceMode:this.source?'factory':'fixture'};
  }
- async execute(actor:Principal,command:Command):Promise<FactoryView> {
+ async execute(actor:Principal,command:Command,origin:Provenance={mode:'fixture_persona'}):Promise<FactoryView> {
   await this.ready;
   if(command.expectedPrincipalId!==actor.id) throw new FactoryError('persona_changed','Fixture persona changed in another tab. Reload and check prior history before resubmitting.',409);
   if(typeof command.operation!=='string') throw new FactoryError('validation','An operation name is required.');
@@ -88,6 +90,9 @@ export class FactoryStore {
      if(round&&snapshot(current.work).digest!==round.snapshot.digest) throw new FactoryError('changed_evidence','Authoritative Factory evidence changed. Cancel and review it in a new round; prior sign-offs cannot be renewed by refresh.',409);
     }
     const next=transition(current,actor,command);
+    // Record how the actor was identified at action time; never upgraded later.
+    const prior=new Set(current.history.map(h=>h.id));
+    for(const entry of next.history) if(!prior.has(entry.id)) entry.provenance=origin;
     await tx.query('UPDATE factory_state SET version=$2,document=$3 WHERE scope=$1',[this.scope,next.version,JSON.stringify(next)]);
     await tx.query('INSERT INTO factory_snapshots (scope,snapshot_id,document) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING',[this.scope,next.snapshot.id,JSON.stringify(next.snapshot)]);
    }
