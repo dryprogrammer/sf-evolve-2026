@@ -1,0 +1,29 @@
+{
+  "sourceMethod": "subagent_tool",
+  "observerConversationId": "4a7986fa-aa36-5ef8-8816-2431631905fd",
+  "workerConversationId": "85d25add-67b5-44bc-8d9f-2a6414c0a5ee",
+  "turnId": "8c2379031c4143ab9eaa0da916121004",
+  "text": "These snapshots support receipt of incremental assistant progress during the ongoing capture\u2014not merely replay of buffered text. They do **not** establish token-level freshness, supervisor-control consumption, completed-turn convergence, or safety/isolation. Zero reported gaps does not prove end-to-end completeness. This is **not a P1 pass**.",
+  "nextCheck": "The parent should correlate a uniquely identified control with worker acknowledgment and subsequent behavior, then compare terminal source state and final part offsets/text against the relay projection.",
+  "historical": true,
+  "superseded": true,
+  "supersessionReason": "Later test-worker control evidence must be assessed separately; this is a frozen earlier interpretation, not current advice.",
+  "generationTimestamp": null,
+  "budget": {
+    "invocations": 1,
+    "directedReadOnlyToolCallsMaximum": 4,
+    "inferenceTokens": null,
+    "cost": null,
+    "hardToolIsolation": false
+  },
+  "evidence": [
+    {
+      "path": "phase1/evidence/native-relay-during-capture.json",
+      "sha256": "0c2b5ee62c592bf0d705d0cacdd7aea8a3f6c3b6e3065d448ddc1a8fda0f9495"
+    },
+    {
+      "path": "phase1/evidence/native-relay-during-parts.json",
+      "sha256": "bfd3899a17bcddcd58bc90c624316bea2caa6d5207a73b5c57f1c1964c04c377"
+    }
+  ]
+}

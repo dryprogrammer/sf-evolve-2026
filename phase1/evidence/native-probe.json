@@ -1,0 +1,10 @@
+{
+  "checkedAt": "2026-11-14T10:11:15.822Z",
+  "url": "https://api.factory.8090.dev/v2/project/e6c7fbf5-1f8a-4427-a320-c9eaad5ff200/agents/chat-agent/stream",
+  "authenticated": false,
+  "status": 401,
+  "durationMs": 56.011099,
+  "contentType": "application/json",
+  "body": "{\"detail\":\"Invalid or missing authentication token\",\"exception_class_name\":\"SofaNotAuthenticated\"}",
+  "conclusion": "Authenticated stream is blocked in this workspace; not evidence streaming is impossible."
+}
