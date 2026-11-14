@@ -127,7 +127,7 @@ The initial collector recorded **143 transient read errors** and no persistence 
 
 ## Recommended strategy and approval gate
 
-Prefer **browser-attached CDP capture of the app’s authenticated native resumable SSE** for the next feasibility test; a supported direct API is an alternative if authorized access is available. For the eventual world, with event IDs, explicit turn identity, reconnect/history reconciliation and per-conversation authorization. Use only signals actually validated; treat missing streams as unknown/stale. Keep workspace-exec capture as a narrow genuine fallback. Do not substitute simulated state or treat an exec exit as agent idleness/turn completion.
+Prefer **browser-attached CDP capture of the app’s authenticated native resumable SSE** for the next feasibility test; a supported direct API is an alternative if authorized access is available. The eventual world should preserve event IDs, explicit turn identity, reconnect/history reconciliation and per-conversation authorization. Use only signals actually validated; treat missing streams as unknown/stale. Keep workspace-exec capture as a narrow genuine fallback. Do not substitute simulated state or treat an exec exit as agent idleness/turn completion.
 
 Before claiming full Phase 1 feasibility: authenticate an authorized test browser/session, monitor two independently active native conversations, measure `done`/terminal status and replay, and send one controlled instruction while a test agent is executing, checking acceptance, consumption event and effect separately. Also test turn-completion history updates if live transport fails.
 
