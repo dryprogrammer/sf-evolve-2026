@@ -5,6 +5,12 @@ CREATE TABLE IF NOT EXISTS factory_state (
   CHECK ((document->>'version')::integer = version),
   CHECK (jsonb_array_length(jsonb_path_query_array(document, '$.rounds[*] ? (@.state == "open")')) <= 1)
 );
+CREATE TABLE IF NOT EXISTS factory_snapshots (
+  scope text NOT NULL REFERENCES factory_state(scope),
+  snapshot_id text NOT NULL,
+  document jsonb NOT NULL,
+  PRIMARY KEY (scope, snapshot_id)
+);
 CREATE TABLE IF NOT EXISTS factory_drafts (
   scope text NOT NULL REFERENCES factory_state(scope),
   author_id text NOT NULL,

@@ -42,7 +42,7 @@ export function transition(current:Aggregate,actor:Principal,command:Command):Ag
    }
    case 'feedback': {
     if(r.state!=='open') fail('validation','Feedback needs an open review.');
-    if(!['advice','support','request_changes'].includes(String(p.disposition))) fail('validation','Choose a feedback disposition.');
+    if(typeof p.disposition!=='string'||!['advice','support','request_changes'].includes(p.disposition)) fail('validation','Choose a feedback disposition.');
     r.feedback.push({id:randomUUID(),actorId:actor.id,kind:actor.kind,text:text(p.text,10000),disposition:p.disposition as 'advice'|'support'|'request_changes',createdAt:now,snapshotId:r.snapshot.id}); record('feedback','Saved an attributed contribution; not a sign-off.',r); break;
    }
    case 'signoff': {

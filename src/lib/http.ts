@@ -5,7 +5,10 @@ export function principal(request:Request):Principal {
  const actor=principals.find(p=>p.id===id); if(!actor) throw new FactoryError('denied','Unknown fixture persona.',403); return actor;
 }
 export function sameOrigin(request:Request){
- fixtureOnly(); const origin=request.headers.get('origin'); if(!origin||origin!==new URL(request.url).origin) throw new FactoryError('denied','A same-origin request is required.',403);
+ fixtureOnly(); const origin=request.headers.get('origin'); const host=request.headers.get('host')??new URL(request.url).host;
+ let matches=false; try { const parsed=new URL(origin??''); matches=parsed.origin===origin&&parsed.host===host&&['http:','https:'].includes(parsed.protocol); } catch {}
+ const site=request.headers.get('sec-fetch-site');
+ if(!matches||(site&&site!=='same-origin')) throw new FactoryError('denied','A same-origin request is required.',403);
  if(!(request.headers.get('content-type')??'').startsWith('application/json')) throw new FactoryError('validation','JSON content is required.',415);
 }
 export async function body(request:Request):Promise<unknown>{

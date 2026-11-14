@@ -56,7 +56,7 @@ export default function FactoryFloor() {
       let next: FactoryView;
       try { next = await responseView(response); }
       catch (e) {
-        if (response.ok) setRetry(command); // An unreadable success may already have committed.
+        if (response.ok || (e instanceof Error && e.message.startsWith('unavailable:'))) setRetry(command); // The response may be lost after commit.
         else setRetry(null);
         throw e;
       }
@@ -64,18 +64,30 @@ export default function FactoryFloor() {
         setDraft(next.draft?.text ?? ''); setFeedback(''); setDisposition('advice');
         setSelected(next.rounds.at(-1)?.id ?? '');
       }
+      if (next.work.evidence.some(e => !e.permitted)) { setDraft(''); setFeedback(''); }
       setView(next); setRetry(null);
       if (command.operation === 'create_round') setSelected(next.rounds.at(-1)?.id ?? '');
       if (command.operation === 'discard_draft') setDraft('');
       setNotice(command.operation === 'save_draft' ? 'Private draft saved to the server.' : 'Server confirmed the action.');
       return true;
-    } catch (e) { setError(e instanceof Error ? e.message : 'Request failed. Your text has been retained.'); return false; }
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Request failed. Your text has been retained.';
+      if (message.startsWith('source_denied:') || message.startsWith('persona_changed:')) {
+        // Detected access/session changes invalidate every old protected projection immediately.
+        setView(null); setDraft(''); setFeedback(''); setSelected(''); setDisposition('advice'); setRetry(null);
+        try {
+          const current = await responseView(await fetch('/api/factory', { cache: 'no-store' }));
+          setView(current); setDraft(current.draft?.text ?? ''); setSelected(current.rounds.at(-1)?.id ?? '');
+        } catch { /* Keep the protected view hidden if reconciliation is unavailable. */ }
+      }
+      setError(message); return false;
+    }
     finally { lock.current = false; setBusy(false); }
   }
 
   const send: Send = async (operation, payload, roundId) => {
     if (!view || blocked || lock.current) return false;
-    return submit({ operation, payload, roundId, expectedVersion: view.version, idempotencyKey: crypto.randomUUID() });
+    return submit({ operation, payload, roundId, expectedVersion: view.version, expectedPrincipalId: view.principal.id, idempotencyKey: crypto.randomUUID() });
   };
 
   async function reload(principalId?: string) {
@@ -89,6 +101,7 @@ export default function FactoryFloor() {
         if (!response.ok) { const data = await response.json(); throw new Error(data.error?.message ?? 'Persona switch failed.'); }
       }
       const next = await responseView(await fetch('/api/factory', { cache: 'no-store' }));
+      if (next.work.evidence.some(e => !e.permitted)) { setDraft(''); setFeedback(''); }
       setView(next);
       if (principalId || !view || next.principal.id !== view.principal.id) {
         setDraft(next.draft?.text ?? ''); setFeedback(''); setSelected(next.rounds.at(-1)?.id ?? '');

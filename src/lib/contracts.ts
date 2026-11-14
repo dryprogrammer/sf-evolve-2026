@@ -14,7 +14,7 @@ export interface History { id: string; actorId: string; createdAt: string; type:
 export interface Aggregate { version: number; work: Work; snapshot: Snapshot; rounds: Round[]; history: History[]; }
 export interface Draft { text: string; snapshotId: string; version: number; }
 export interface FactoryView extends Aggregate { principal: Principal; principals: Principal[]; draft: Draft | null; sourceMode: 'fixture'; }
-export interface Command { operation: 'create_round'|'configure_round'|'publish'|'feedback'|'signoff'|'decide'|'reassign'|'cancel'|'refresh'|'save_draft'|'discard_draft'|'simulate_change'|'simulate_outage'|'simulate_revoke'; expectedVersion: number; idempotencyKey: string; roundId?: string; payload: Record<string,unknown>; }
+export interface Command { operation: 'create_round'|'configure_round'|'publish'|'feedback'|'signoff'|'decide'|'reassign'|'cancel'|'refresh'|'save_draft'|'discard_draft'|'simulate_change'|'simulate_outage'|'simulate_revoke'; expectedVersion: number; expectedPrincipalId: string; idempotencyKey: string; roundId?: string; payload: Record<string,unknown>; }
 export class FactoryError extends Error { constructor(public code: string, message: string, public status = 400) { super(message); } }
 export const principals: Principal[] = [
  { id:'maya', name:'Maya · coordinator', kind:'human', coordinator:true },
