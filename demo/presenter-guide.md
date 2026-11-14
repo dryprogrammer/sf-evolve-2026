@@ -5,7 +5,7 @@ Target: 4:30, with 30 seconds of buffer. Private rehearsal material. No publicat
 ## Open before recording
 
 1. Open `drift-room-slides.html` in a standalone browser tab. Arrow keys move, N toggles notes, F requests fullscreen. Print / PDF exports the six slides.
-2. Open the actual Drift Room app and PR #6: https://github.com/dryprogrammer/sf-evolve-2026/pull/6 . Sign in to private GitHub before recording. Do not show tokens, terminal secrets, unrelated conversations, or private data.
+2. Open the actual Drift Room app at its `/drift-room` route and PR #6: https://github.com/dryprogrammer/sf-evolve-2026/pull/6 . Sign in to private GitHub before recording. Do not show tokens, terminal secrets, unrelated conversations, or private data.
 3. Have the app's frozen v1 snapshot available. **Load review snapshot** imports a local JSON file without network calls. It requires all three recorded reviewer roles, the same snapshot ID, and literal citations into available sources. Invalid imports retain the existing deck. This does not start agents or persist app decisions.
 4. Read the imported findings. Pick one actual disagreement and one proposed correction. If reviews are not ready, slide 3 is deliberately a role-only scaffold; it is not a completed review reveal.
 5. Rehearse the app's source drill-down and local decision persistence. Do not claim either works based on this deck.
