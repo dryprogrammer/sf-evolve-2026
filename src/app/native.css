@@ -105,3 +105,7 @@ main.native-main { max-width:1500px; width:100%; padding:28px 32px; min-width:0;
 .native-perspectives .perspective-voices .pv-evidence { color:#515f76; font-size:11px; }
 .native-perspectives .perspective-voices .pv-status { font-size:10px; }
 @media(max-width:600px) { .native-header-actions { flex-wrap:wrap; } }
+
+/* Keep actual server outcomes visible when long evidence/review forms are scrolled. */
+.native-inspector .messages:not(:empty) { position: sticky; top: 0; z-index: 4; background: #fff; padding: 4px 0; margin-top: 0; }
+.native-inspector .messages .alert { margin: 0; }

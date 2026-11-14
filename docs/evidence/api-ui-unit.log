@@ -1,0 +1,46 @@
+
+> sf-evolve-2026@0.1.0 test
+> vitest run
+
+
+ RUN  v3.2.7 /workspace/dryprogrammer/sf-evolve-2026
+
+ ✓ tests/store.test.ts (11 tests) 6350ms
+   ✓ transactional persistence > persists private drafts, detects conflicts and retains monotonically increasing discard versions  780ms
+   ✓ transactional persistence > reconciles identical retries and rejects same key with new content  626ms
+   ✓ transactional persistence > serializes competing commands and rolls back failure without receipt  488ms
+   ✓ transactional persistence > recovers confirmed state after database reopen  943ms
+   ✓ transactional persistence > redacts both historical and current evidence and drafts after detected revocation  590ms
+   ✓ transactional persistence > reverifies unchanged evidence after PostgreSQL JSONB serialization  609ms
+   ✓ transactional persistence > treats reordered object keys as the same idempotent command  479ms
+   ✓ transactional persistence > retains the original evidence snapshot after source refresh  450ms
+   ✓ transactional persistence > rejects a displayed-persona mismatch before mutating another private draft  464ms
+   ✓ transactional persistence > reconciles a committed receipt despite a subsequent outage or revocation  468ms
+   ✓ transactional persistence > SQL constraint independently rejects two open rounds  452ms
+ ✓ tests/api-store.test.ts (9 tests) 4909ms
+   ✓ FactoryStore mocked authoritative source transactions (NOT live integration evidence) > syncs get and reverifies execute, retaining old signoffs, contributions and immutable snapshots after real mock-source change  730ms
+   ✓ FactoryStore mocked authoritative source transactions (NOT live integration evidence) > observes changed content on get without replacing the saved inspected snapshot  479ms
+   ✓ FactoryStore mocked authoritative source transactions (NOT live integration evidence) > rejects publishing a stale draft even after refreshing the saved snapshot  495ms
+   ✓ FactoryStore mocked authoritative source transactions (NOT live integration evidence) > approves unchanged verified evidence only after the required human signoff  499ms
+   ✓ FactoryStore mocked authoritative source transactions (NOT live integration evidence) > fails closed on unavailable source for reads, commands and receipt replay without changing persisted state  461ms
+   ✓ FactoryStore mocked authoritative source transactions (NOT live integration evidence) > denies simulate_change even to a coordinator in factory scope  469ms
+   ✓ FactoryStore mocked authoritative source transactions (NOT live integration evidence) > denies simulate_outage even to a coordinator in factory scope  446ms
+   ✓ FactoryStore mocked authoritative source transactions (NOT live integration evidence) > denies simulate_revoke even to a coordinator in factory scope  454ms
+   ✓ FactoryStore mocked authoritative source transactions (NOT live integration evidence) > keeps fixture state unchanged when the same database is reopened with a separate factory scope  876ms
+ ✓ tests/handoff-gates.test.ts (2 tests) 750ms
+   ✓ handoff evidence gates > store: rejects stale approval and requires a fresh review without losing attribution  742ms
+ ✓ tests/navigation.test.ts (5 tests) 177ms
+ ✓ tests/factory-source.test.ts (31 tests) 33ms
+ ✓ tests/review.test.ts (10 tests) 24ms
+stderr | tests/http.test.ts > fixture HTTP trust boundary > rejects malformed and oversized bodies
+Factory request failed: Error
+
+ ✓ tests/http.test.ts (5 tests) 9ms
+ ✓ tests/attention.test.ts (7 tests) 5ms
+ ✓ tests/renewal.test.ts (3 tests) 2ms
+
+ Test Files  9 passed (9)
+      Tests  83 passed (83)
+   Start at  20:25:58
+   Duration  13.65s (transform 157ms, setup 0ms, collect 289ms, tests 12.26s, environment 1ms, prepare 332ms)
+

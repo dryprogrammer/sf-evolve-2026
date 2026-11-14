@@ -1,5 +1,8 @@
 # The Factory — a walkable sprite workshop
 
+> **2026-11-14 API/UI follow-on:** The default UI is now the selected native, record-centered Work Orders view. An opt-in **server-side Factory API evidence adapter** is implemented and live-tested; the fixture fallback remains separate. A real edit to a labeled supplemental Factory demo document changed the review basis and produced HTTP 409 `changed_evidence` before and after refresh. See [the current integration handoff](docs/api-ui-delivery.md) and [sanitized live proof](docs/evidence/factory-live-proof.json). MCP clarification is **deferred**, not a delivered round-trip. Selectable personas are still fictional local identities, not production authentication, independent reviewers, or native Factory approval. Historical fixture-only statements below describe the earlier checkpoint.
+
+
 An original **walkable 2D pixel-art factory** with five role workstations and a contextual work inspector. Presence and movement are explicitly simulated; review state is really persisted in the local fixture pilot.
 
 The asynchronous, **fixture-backed** workflow provides: persisted work evidence, private drafts, explicit human review assignments, separate advice/sign-off/decision, immutable evidence fingerprints, preserved concerns and auditable decisions.

@@ -1,0 +1,23 @@
+
+> sf-evolve-2026@0.1.0 test:e2e
+> playwright test
+
+
+Running 14 tests using 1 worker
+
+  ✓   1 tests/browser/factory.spec.ts:5:1 › optional sprite floor reaches all five stations and opens a contextual inspector (18.2s)
+  ✓   2 tests/browser/factory.spec.ts:14:1 › keyboard and click movement preserve unsent text and position across focus-contained inspector visits (720ms)
+  ✓   3 tests/browser/factory.spec.ts:22:1 › reduced motion preserves deliberate navigation and mobile touch controls fit the page (2.0s)
+  ✓   4 tests/browser/factory.spec.ts:26:1 › permission loss clears protected floor summaries and persona switching updates the shared projection (874ms)
+  ✓   5 tests/browser/handoff.spec.ts:52:1 › changed evidence rejects a signed old round after refresh; a newly reviewed round persists approval (2.1s)
+  ✓   6 tests/browser/journey.spec.ts:3:1 › human review journey preserves privacy, human concerns and source progress (1.5s)
+  ✓   7 tests/browser/journey.spec.ts:55:1 › source revocation removes protected draft and review projections (700ms)
+  ✓   8 tests/browser/journey.spec.ts:69:1 › cross-tab persona and detected permission changes cannot leak or overwrite drafts (3.4s)
+  ✓   9 tests/browser/journey.spec.ts:81:1 › lost successful save retries the same receipt even during an outage (997ms)
+  ✓  10 tests/browser/native.spec.ts:22:1 › native Work Orders is the default and renders only the backend shared record (296ms)
+  ✓  11 tests/browser/native.spec.ts:44:1 › native record opens the working inspector with modal focus, Escape and focus return (707ms)
+  ✓  12 tests/browser/native.spec.ts:75:1 › native context and its inspector fit a 320px viewport without horizontal overflow (368ms)
+  ✓  13 tests/browser/native.spec.ts:94:1 › unavailable agent activity and unsupported project modules are disabled, not fake tools (279ms)
+  ✓  14 tests/browser/story.spec.ts:2:1 › caption-only fallback and Needs you action open inspectable source-linked context (490ms)
+
+  14 passed (33.8s)
