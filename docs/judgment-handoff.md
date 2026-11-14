@@ -15,3 +15,7 @@ A prepared business question, two explicit policy choices, and an attributed hum
 ## Boundaries
 
 The question is scripted fiction; the proposal is a deterministic template, **not** an agent-generated completion or MCP invocation. Human answers are real persisted fixture-persona actions, not authenticated independent identities. The panel belongs only to DEMO-1 in fixture mode and is absent for the unrelated API-backed WO-2 context. It does not write policy, change implementation, auto-sign or approve. Choosing a new policy still requires reconciliation and review; the mismatch display is not a new approval gate. Existing Factory-source proof remains separate.
+
+## Verification
+
+95 unit/service tests, 15 real-backend fixture browser journeys, typecheck and production build pass. See `docs/evidence/judgment-verification.json` for the exact revision and hashes.
