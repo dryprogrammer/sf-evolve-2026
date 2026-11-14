@@ -35,7 +35,10 @@ export default function FactoryScene(props:Props) {
     if(keys.current.has('arrowdown')||keys.current.has('s'))dy++;
     if(dx||dy){path.current=[];const len=Math.hypot(dx,dy);dx/=len;dy/=len;}
     else if(path.current.length){const waypoint=path.current[0],x=waypoint.x-position.current.x,y=waypoint.y-position.current.y,len=Math.hypot(x,y);if(len<5){position.current={...waypoint};path.current.shift();}else {dx=x/len;dy=y/len;}}
-    if(dx||dy){const step=160*dt,p=position.current;const nx={x:p.x+dx*step,y:p.y};if(walkable(nx)){p.x=nx.x;moving=true;}const ny={x:p.x,y:p.y+dy*step};if(walkable(ny)){p.y=ny.y;moving=true;}if(Math.abs(dx)>Math.abs(dy))facing.current=dx<0?'left':'right';else facing.current=dy<0?'up':'down';}
+    if(dx||dy){const p=position.current,waypoint=path.current[0],step=Math.min(160*dt,waypoint?Math.hypot(waypoint.x-p.x,waypoint.y-p.y):Infinity);
+     if(waypoint){const next={x:p.x+dx*step,y:p.y+dy*step};if(walkable(next)){p.x=next.x;p.y=next.y;moving=true;}else{path.current=[];setMessage('Route interrupted. Choose another open aisle.');}}
+     else{const nx={x:p.x+dx*step,y:p.y};if(walkable(nx)){p.x=nx.x;moving=true;}const ny={x:p.x,y:p.y+dy*step};if(walkable(ny)){p.y=ny.y;moving=true;}}
+     if(Math.abs(dx)>Math.abs(dy))facing.current=dx<0?'left':'right';else facing.current=dy<0?'up':'down';}
    }
    const nearest=nearbyStation(position.current)?.id??null;
    if(nearest!==near.current){near.current=nearest;propsRef.current.onNearby(nearest);if(nearest)setMessage(`${STATIONS.find(s=>s.id===nearest)?.title} nearby. Press E or Enter to inspect.`);}

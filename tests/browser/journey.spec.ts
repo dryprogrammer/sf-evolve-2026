@@ -1,13 +1,14 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
+async function openInspector(page:Page){await page.getByRole('button',{name:'Work inspector',exact:true}).click();await expect(page.getByRole('dialog')).toBeVisible();}
 test('human review journey preserves privacy, human concerns and source progress',async({page})=>{
- await page.goto('/');
- await expect(page.getByRole('heading',{name:'Human-led review pilot'})).toBeVisible();
+ await page.goto('/'); await openInspector(page);
+ await expect(page.getByRole('heading',{name:'Work inspector',exact:true})).toBeVisible();
  await expect(page.getByText('Fixture demonstration',{exact:true})).toBeVisible();
  await expect(page.getByLabel('Fixture persona')).toHaveValue('maya');
  await page.getByLabel('Your working notes').fill('Private draft for Maya');
  await page.getByRole('button',{name:'Save private draft',exact:true}).click();
  await expect(page.getByText('Private draft saved to the server.')).toBeVisible();
- await page.reload(); await expect(page.getByLabel('Your working notes')).toHaveValue('Private draft for Maya');
+ await page.reload(); await openInspector(page); await expect(page.getByLabel('Your working notes')).toHaveValue('Private draft for Maya');
  await page.getByRole('button',{name:'New round',exact:true}).click();
  await expect(page.getByLabel('Human decision maker')).toHaveValue('');
  await expect(page.getByLabel('Human reviewer',{exact:true})).toHaveCount(0);
@@ -47,12 +48,12 @@ test('human review journey preserves privacy, human concerns and source progress
  await page.getByRole('button',{name:'Submit human decision'}).click();
  await expect(page.getByRole('heading',{name:'Human decision · approve'})).toBeVisible();
  await expect(page.getByText(/DEMO-1 · In Progress/)).toBeVisible();
- await page.reload(); await expect(page.getByRole('heading',{name:'Human decision · approve'})).toBeVisible();
+ await page.reload(); await openInspector(page); await expect(page.getByRole('heading',{name:'Human decision · approve'})).toBeVisible();
  await page.setViewportSize({width:390,height:844});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 test('source revocation removes protected draft and review projections',async({page})=>{
- await page.goto('/'); await expect(page.getByLabel('Fixture persona')).toHaveValue('maya');
+ await page.goto('/'); await openInspector(page); await expect(page.getByLabel('Fixture persona')).toHaveValue('maya');
  await page.getByLabel('Your working notes').fill('Sensitive fixture notes');
  await page.getByRole('button',{name:'Save private draft',exact:true}).click();
  await expect(page.getByText('Private draft saved to the server.')).toBeVisible();
@@ -62,27 +63,27 @@ test('source revocation removes protected draft and review projections',async({p
  await expect(page.getByRole('heading',{name:'Human decision · approve'})).toHaveCount(0);
  await page.getByRole('button',{name:'Restore evidence access'}).click();
  await expect(page.getByRole('button',{name:'Revoke evidence access'})).toBeVisible();
- await page.reload();
+ await page.reload(); await openInspector(page);
  await expect(page.getByLabel('Your working notes')).toHaveValue('Sensitive fixture notes');
 });
 test('cross-tab persona and detected permission changes cannot leak or overwrite drafts',async({page,context})=>{
- await page.goto('/');await expect(page.getByLabel('Fixture persona')).toHaveValue('maya');
+ await page.goto('/'); await openInspector(page);await expect(page.getByLabel('Fixture persona')).toHaveValue('maya');
  await page.getByLabel('Your working notes').fill('Maya isolated notes');await page.getByRole('button',{name:'Save private draft',exact:true}).click();await expect(page.getByText('Private draft saved to the server.')).toBeVisible();
- const other=await context.newPage();await other.goto('/');await other.getByLabel('Fixture persona').selectOption('alex');
+ const other=await context.newPage();await other.goto('/'); await openInspector(other);await other.getByLabel('Fixture persona').selectOption('alex');
  await other.getByLabel('Your working notes').fill('Alex isolated notes');await other.getByRole('button',{name:'Save private draft',exact:true}).click();await expect(other.getByText('Private draft saved to the server.')).toBeVisible();
  await page.getByLabel('Your working notes').fill('Maya unsent attempt');await page.getByRole('button',{name:'Save private draft',exact:true}).click();
  await expect(page.getByRole('alert').filter({hasText:'persona_changed'})).toBeVisible();await expect(page.getByLabel('Fixture persona')).toHaveValue('alex');await expect(page.getByLabel('Your working notes')).toHaveValue('Alex isolated notes');
  await page.getByLabel('Fixture persona').selectOption('maya');await expect(page.getByLabel('Your working notes')).toHaveValue('Maya isolated notes');
- await other.reload();await expect(other.getByLabel('Fixture persona')).toHaveValue('maya');await other.getByRole('button',{name:'Revoke evidence access'}).click();await expect(other.getByRole('button',{name:'Restore evidence access'})).toBeVisible();
+ await other.reload(); await openInspector(other);await expect(other.getByLabel('Fixture persona')).toHaveValue('maya');await other.getByRole('button',{name:'Revoke evidence access'}).click();await expect(other.getByRole('button',{name:'Restore evidence access'})).toBeVisible();
  await page.getByRole('button',{name:'Save private draft',exact:true}).click();await expect(page.getByRole('alert').filter({hasText:'source_denied'})).toBeVisible();await expect(page.getByLabel('Your working notes')).toHaveValue('');await expect(page.getByText('Restricted evidence',{exact:true})).toHaveCount(2);
  await other.getByRole('button',{name:'Restore evidence access'}).click();await expect(other.getByRole('button',{name:'Revoke evidence access'})).toBeVisible();await other.close();
 });
 test('lost successful save retries the same receipt even during an outage',async({page,context})=>{
- await page.goto('/');await expect(page.getByLabel('Fixture persona')).toHaveValue('maya');
+ await page.goto('/'); await openInspector(page);await expect(page.getByLabel('Fixture persona')).toHaveValue('maya');
  const before=await page.evaluate(async()=>{const v=await(await fetch('/api/factory')).json();return v.draft?.version??0;});
  await page.route('**/api/factory',async route=>{if(route.request().method()==='POST'){await route.fetch();await route.abort('failed');}else await route.continue();});
  await page.getByLabel('Your working notes').fill('Recover lost success');await page.getByRole('button',{name:'Save private draft',exact:true}).click();await expect(page.getByRole('button',{name:'Retry same command'})).toBeVisible();await page.unroute('**/api/factory');
- const other=await context.newPage();await other.goto('/');await other.getByRole('button',{name:'Simulate outage',exact:true}).click();await expect(other.getByRole('button',{name:'Restore source',exact:true})).toBeVisible();
+ const other=await context.newPage();await other.goto('/'); await openInspector(other);await other.getByRole('button',{name:'Simulate outage',exact:true}).click();await expect(other.getByRole('button',{name:'Restore source',exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Retry same command'}).click();await expect(page.getByRole('button',{name:'Retry same command'})).toHaveCount(0);await expect(page.getByText('Private draft saved to the server.')).toBeVisible();
  const after=await page.evaluate(async()=>{const v=await(await fetch('/api/factory')).json();return v.draft.version;});expect(after).toBe(before+1);
  await page.getByRole('button',{name:'Restore source',exact:true}).click();await expect(page.getByRole('button',{name:'Simulate outage',exact:true})).toBeVisible();await other.close();

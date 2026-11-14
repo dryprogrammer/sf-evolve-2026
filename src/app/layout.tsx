@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Factory floor / Human-led review pilot',
-  description: 'A fixture-backed demonstration of asynchronous human review.',
+  title: 'The Factory · Walkable sprite workshop',
+  description: 'A walkable pixel-art workshop for human and agent collaboration. Fixture-backed review, clearly simulated presence.',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

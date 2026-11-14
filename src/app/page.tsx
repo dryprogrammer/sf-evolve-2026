@@ -16,7 +16,6 @@ export default function FactoryApp(){
  const walk=(id:StationId)=>{setSelected(id);setRequest({id,nonce:Date.now()});};
  const latest=view?.rounds.at(-1),hasAccess=!!view&&view.work.evidence.every(e=>e.permitted);
  const pending=hasAccess?(latest?.assignments.filter(a=>a.responsibility==='required'&&latest.signoffs.filter(s=>s.assignmentId===a.id&&s.generation===a.generation).at(-1)?.outcome!=='approve').length??0):null;
- const humans=view?.principals.filter(p=>p.kind==='human')??[];
  return <div className="factory-app">
   <header className="factory-header"><a className="factory-brand" href="#floor"><PixelMark/><span>The Factory<span className="brand-meta">HUMAN + AGENT WORKSPACE</span></span></a><div className="header-links"><span className="space-label"><span className="status-dot"/>Workshop 01</span><span className="demo-chip">Fixture demonstration</span><button className="inspector-trigger" onClick={()=>setOpen(true)}>Work inspector <span aria-hidden="true">↗</span></button></div></header>
   <div className="factory-layout">
@@ -28,6 +27,15 @@ export default function FactoryApp(){
     <div className="floor-footer"><div className="floor-legend"><span><i className="legend-human"/> Human</span><span><i className="legend-agent"/> Agent</span><span><i className="legend-you"/> You</span></div><p>Presence & movement are simulated. Review state is persisted. <strong>No live 8090 data or inference.</strong></p></div>
    </main>
   </div>
-  <dialog ref={dialog} className="factory-inspector" aria-label={`${station.title} work inspector`} onCancel={()=>setOpen(false)} onClose={()=>setOpen(false)} onClick={e=>{if(e.target===e.currentTarget){const r=e.currentTarget.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)setOpen(false);}}}><div className="inspector-titlebar"><div><span className="inspector-location" style={{background:station.color}}>{station.code}</span><span>{station.title}<small> / WORK INSPECTOR</small></span></div><button aria-label="Close work inspector" onClick={()=>setOpen(false)}>×</button></div><div className="inspector-scroll"><WorkInspector onViewChange={setView} onBlockedChange={setBlocked} personaRequest={personaRequest}/></div></dialog>
+  <dialog ref={dialog} className="factory-inspector" aria-label={`${station.title} work inspector`} onKeyDown={event=>{
+   if(event.key!=='Tab')return;
+   // Native modality makes the background inert; explicitly wrap Tab so
+   // Chromium does not focus the document body at either end of the dialog.
+   const controls=Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button, a[href], input, select, textarea, summary, [tabindex]')).filter(el=>el.tabIndex>=0&&!el.matches(':disabled')&&el.getClientRects().length>0);
+   const first=controls[0],last=controls.at(-1),active=document.activeElement;
+   if(!first){event.preventDefault();event.currentTarget.focus();return;}
+   if(event.shiftKey&&(active===first||!event.currentTarget.contains(active))){event.preventDefault();last?.focus();}
+   else if(!event.shiftKey&&(active===last||!event.currentTarget.contains(active))){event.preventDefault();first.focus();}
+  }} onCancel={()=>setOpen(false)} onClose={()=>setOpen(false)} onClick={e=>{if(e.target===e.currentTarget){const r=e.currentTarget.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)setOpen(false);}}}><div className="inspector-titlebar"><div><span className="inspector-location" style={{background:station.color}}>{station.code}</span><span>{station.title}<small> / WORK INSPECTOR</small></span></div><button aria-label="Close work inspector" onClick={()=>setOpen(false)}>×</button></div><div className="inspector-scroll"><WorkInspector onViewChange={setView} onBlockedChange={setBlocked} personaRequest={personaRequest}/></div></dialog>
  </div>;
 }
