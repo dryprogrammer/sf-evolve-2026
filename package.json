@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "dev:fixture": "FACTORY_MODE=fixture next dev --hostname 0.0.0.0",
     "start:fixture": "FACTORY_MODE=fixture next start --hostname 0.0.0.0",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "dev:drift": "DRIFT_DEMO=1 FACTORY_MODE=fixture next dev --webpack --hostname 0.0.0.0"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.14",

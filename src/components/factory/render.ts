@@ -1,4 +1,4 @@
-import { STATIONS, WORLD, type SceneState, type Station, type Point } from './world';
+import { STATIONS, DRIFT_STATIONS, WORLD, type SceneState, type Station, type Point } from './world';
 
 // All artwork is original canvas geometry. Coordinates are world pixels; the
 // caller owns the viewport/DPR transform. Feet, markers and collision footprints
@@ -327,7 +327,7 @@ function security(ctx: CanvasRenderingContext2D, state: SceneState) {
 }
 function reviewSign(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, state: SceneState, securityOnly: boolean) {
   panel(ctx, x, y, w, 19, '#405e52');
-  if (!state.hasAccess) {
+  if (!state.hasAccess && !state.drift) {
     // No review-derived text, count or status hue leaks into a denied view.
     text(ctx, 'RESTRICTED', x + w / 2, y + 10, 10, '#e4e9d1', 'center');
     return;
@@ -342,7 +342,7 @@ function reviewSign(ctx: CanvasRenderingContext2D, x: number, y: number, w: numb
   // canvas label. Parent UI supplies the full review details accessibly.
   const label = labels[state.reviewState] ?? 'Review';
   const pending = Math.max(0, Math.min(99, Math.floor(Number.isFinite(state.pending) ? state.pending : 0)));
-  const value = securityOnly ? `Review · ${pending} pending` : `${label} · ${pending} pending`;
+  const value = state.drift ? 'Recorded review' : securityOnly ? `Review · ${pending} pending` : `${label} · ${pending} pending`;
   text(ctx, value, x + w / 2, y + 10, securityOnly ? 9 : 10, '#dce6c5', 'center');
 }
 function maintainability(ctx: CanvasRenderingContext2D) {
@@ -580,7 +580,7 @@ export function drawFactory(ctx: CanvasRenderingContext2D, state: SceneState): v
     ctx.lineCap = 'butt';
     ctx.lineJoin = 'miter';
     room(ctx);
-    for (const station of STATIONS) stationBase(ctx, station, state);
+    for (const station of (state.drift ? DRIFT_STATIONS : STATIONS)) stationBase(ctx, station, state);
     if (state.destination) destination(ctx, state.destination);
 
     // Depth-sort standing characters together with the solid furniture fronts.
@@ -613,7 +613,7 @@ export function drawFactory(ctx: CanvasRenderingContext2D, state: SceneState): v
         if (npc.id === 'robot') robot(ctx, npc.x, npc.y + idle, npc.facing, 0);
         else {
           human(ctx, npc.id, npc.x, npc.y + idle, npc.facing, 0);
-          text(ctx, npc.id[0].toUpperCase() + npc.id.slice(1), npc.x, npc.y - 62, 11, '#4c6256', 'center');
+          text(ctx, state.drift ? ({maya:'Intent',alex:'Delivery',river:'Skeptic'}[npc.id]) : npc.id[0].toUpperCase() + npc.id.slice(1), npc.x, npc.y - 62, 11, '#4c6256', 'center');
         }
       } });
     });

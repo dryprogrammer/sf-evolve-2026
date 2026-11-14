@@ -10,6 +10,11 @@ export const STATIONS:Station[] = [
  {id:'growth',title:'Growth',code:'04',color:'#bea7bf',rect:{x:704,y:384,w:176,h:96},entry:{x:784,y:528},description:'A place for a different human perspective. This role station shares the fixture review, not a live growth team.'},
  {id:'economics',title:'Economics',code:'05',color:'#d3b775',rect:{x:928,y:392,w:128,h:96},entry:{x:1008,y:528},description:'Make trade-offs visible. This fixture role station opens the shared work inspector; it does not simulate real costs.'}
 ];
+export const DRIFT_STATIONS:Station[] = [
+ {...STATIONS[0], title:'Intent', description:'Inspect the recorded intent review.'},
+ {...STATIONS[1], title:'Delivery', description:'Inspect the recorded delivery review.'},
+ {...STATIONS[2], title:'Skeptic', description:'Inspect the recorded skeptic review.'},
+];
 export const OBSTACLES:Rect[] = [...STATIONS.map(s=>s.rect),{x:80,y:112,w:192,h:96},{x:672,y:144,w:112,h:112},{x:48,y:568,w:112,h:80},{x:432,y:416,w:128,h:80}];
 export const SPAWN:Point = {x:592,y:592};
 export const BOUNDS = {x:64,y:96,w:1024,h:560};
@@ -19,4 +24,4 @@ export function walkable(p:Point):boolean {
 }
 export function nearbyStation(p:Point):Station|null {return STATIONS.find(s=>Math.hypot(s.entry.x-p.x,s.entry.y-p.y)<72)??null;}
 export function stationAt(p:Point):Station|null {return STATIONS.find(s=>p.x>=s.rect.x-10&&p.x<=s.rect.x+s.rect.w+10&&p.y>=s.rect.y-40&&p.y<=s.rect.y+s.rect.h+28)??null;}
-export interface SceneState { player:Point; facing:'down'|'up'|'left'|'right'; moving:boolean; time:number; reducedMotion:boolean; selected:StationId|null; destination:Point|null; nearby:StationId|null; principalId:string; reviewState:string; pending:number; sourceAvailable:boolean; hasAccess:boolean; }
+export interface SceneState { drift?:boolean; player:Point; facing:'down'|'up'|'left'|'right'; moving:boolean; time:number; reducedMotion:boolean; selected:StationId|null; destination:Point|null; nearby:StationId|null; principalId:string; reviewState:string; pending:number; sourceAvailable:boolean; hasAccess:boolean; }

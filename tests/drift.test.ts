@@ -210,3 +210,32 @@ describe('Drift decisions — mocked browser storage, real decision functions', 
   expect(() => saveDecision(snapshot, snapshot.reviews[0], finding(snapshot), 'Reason.')).toThrow(failure);
  });
 });
+
+// Regressions for corrupt API/localStorage data that previously crashed the UI.
+describe('Drift boundary hardening', () => {
+ it.each(['limitations', 'title', 'coverage'])('rejects missing rendering field %s', field => {
+  const snapshot = { ...fixture() } as Record<string, unknown>; delete snapshot[field];
+  expect(() => validateSnapshot(snapshot)).toThrow();
+ });
+ it('rejects malformed nested reviews before rendering', () => {
+  const snapshot = fixture(); (snapshot.reviews[0] as unknown as Record<string, unknown>).findings = null;
+  expect(() => validateSnapshot(snapshot)).toThrow();
+ });
+ it('rejects duplicate reviewer roles', () => {
+  const snapshot = fixture(); snapshot.reviews[1].role = 'intent';
+  expect(() => validateSnapshot(snapshot)).toThrow();
+ });
+ it('rejects invalid recorded timestamps', () => {
+  const snapshot = fixture(); snapshot.capturedAt = 'not-a-date';
+  expect(() => validateSnapshot(snapshot)).toThrow();
+ });
+ it('rejects a modified correction even with a matching finding ID', () => {
+  const snapshot = fixture();
+  expect(() => saveDecision(snapshot, snapshot.reviews[0], { ...finding(snapshot), correction: 'Unrecorded edit' }, 'Reason')).toThrow();
+ });
+ it('reports corrupt local storage without silently losing it', () => {
+  const getItem = vi.fn(() => '{broken'); vi.stubGlobal('window', { localStorage: { getItem } });
+  try { expect(() => readDecision(fixture())).toThrow(); expect(getItem).toHaveBeenCalledTimes(1); }
+  finally { vi.unstubAllGlobals(); }
+ });
+});

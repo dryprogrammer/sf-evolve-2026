@@ -182,7 +182,7 @@ test.describe('Drift Room — MOCKED GET snapshot, actual browser/localStorage',
   await mockSnapshot(page, fixture());
   await page.route('**/api/drift', route => route.fulfill({ status: 503, json: { error: 'Synthetic evidence outage' } }));
   await page.reload();
-  await expect(page.getByRole('alert')).toContainText('Synthetic evidence outage');
+  await expect(page.locator('section[role=alert]')).toContainText('Synthetic evidence outage');
   await expect(inspector(page)).toHaveCount(0);
   await expect(save(page)).toHaveCount(0);
   await page.route('**/api/drift', route => route.fulfill({ json: fixture() }));
@@ -251,4 +251,37 @@ test.describe('Drift Room — ACTUAL GET /api/drift integration (no response moc
   await expect(dialog.locator('pre')).toHaveText(source!.content || 'No content collected.');
   await expect(dialog).toContainText(source!.revision ?? 'Unknown / not exposed');
  });
+});
+
+test('actual local demo: walk, inspect, save, reload without live APIs or runtime errors', async ({ page }) => {
+ const crashes: string[] = [], writes: string[] = [];
+ page.on('pageerror', error => crashes.push(error.message));
+ page.on('request', request => {
+  if (new URL(request.url()).pathname.startsWith('/api/') && request.method() !== 'GET') writes.push(request.url());
+ });
+ await page.goto('/drift-room');
+ const canvas = page.getByRole('application', { name: 'Walkable Drift Room' });
+ await expect(canvas).toBeVisible();
+ for (const [title, id, role] of [['Intent','assembly','intent'],['Delivery','security','delivery'],['Skeptic','maintainability','skeptic']] as const) {
+  await page.getByRole('button', { name: `Walk to ${title}`, exact:true }).click();
+  await expect(canvas).toHaveAttribute('data-nearby', id, { timeout:15000 });
+  await canvas.press('e');
+  await expect(station(page, role)).toHaveAttribute('aria-pressed','true');
+  await expect(inspector(page)).toBeFocused();
+ }
+ await rationale(page).fill('Keep this a bounded local demo; do not imply production access control.');
+ await save(page).click();
+ await expect(page.getByRole('heading', { name:'Selected correction', exact:true })).toBeVisible();
+ await page.reload();
+ await expect(page.getByText('Keep this a bounded local demo; do not imply production access control.', {exact:true})).toBeVisible();
+ expect(crashes).toEqual([]); expect(writes).toEqual([]);
+});
+
+test('malformed API evidence fails safely instead of crashing', async ({page}) => {
+ const crashes: string[] = []; page.on('pageerror', error => crashes.push(error.message));
+ await page.route('**/api/drift', route => route.fulfill({json:{...fixture(), reviews:[null]}}));
+ await page.goto('/drift-room');
+ await expect(page.locator('section[role=alert]')).toContainText('Evidence unavailable');
+ await expect(inspector(page)).toHaveCount(0);
+ expect(crashes).toEqual([]);
 });

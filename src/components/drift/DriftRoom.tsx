@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import type { DriftDecision, DriftFinding, DriftReview, DriftSnapshot, DriftSource, ReviewerRole } from '@/lib/drift/contracts';
 import { readDecision, saveDecision } from '@/lib/drift/decision';
+import FactoryScene, { type NavigationRequest } from '@/components/factory/FactoryScene';
+import { DRIFT_STATIONS, type StationId } from '@/components/factory/world';
 import { validateSnapshot } from '@/lib/drift/validate';
 import styles from './DriftRoom.module.css';
 
@@ -23,6 +25,8 @@ export default function DriftRoom() {
  const [source, setSource] = useState<DriftSource | null>(null);
  const [decision, setDecision] = useState<DriftDecision | null>(null);
  const [rationale, setRationale] = useState(''), [decisionMessage, setDecisionMessage] = useState('');
+ const [walkRequest, setWalkRequest] = useState<NavigationRequest | null>(null);
+ const [nearby, setNearby] = useState<StationId | null>(null);
  const [retry, setRetry] = useState(0);
  const inspector = useRef<HTMLElement>(null), dialog = useRef<HTMLDialogElement>(null);
  const sourceTrigger = useRef<HTMLElement | null>(null);
@@ -62,13 +66,20 @@ export default function DriftRoom() {
  function closeSource() { setSource(null); requestAnimationFrame(() => sourceTrigger.current?.focus()); }
  return <div className={styles.room}>
   <a className={styles.skip} href="#drift-inspector">Skip to finding inspector</a>
-  <header className={styles.header}><a href="/" className={styles.brand}><span className={styles.mark} aria-hidden="true">▦</span> Software Factory</a><span className={styles.project}>learn sf / Drift Room</span><span className={styles.recorded}>RECORDED REVIEW · NOT LIVE</span></header>
+  <header className={styles.header}><a href="/drift-room" className={styles.brand}><span className={styles.mark} aria-hidden="true">▦</span> Software Factory</a><span className={styles.project}>learn sf / Drift Room</span><span className={styles.recorded}>RECORDED REVIEW · NOT LIVE</span></header>
   <main className={styles.main}>
    <div className={styles.heading}><div><p className={styles.eyebrow}>THE COUNCIL ROOM / EVIDENCE BEFORE ACTION</p><h1>One snapshot.<br/><span>Three perspectives.</span></h1><p className={styles.intro}>Put intent and delivery on the same table. Inspect the disagreement, then choose what should change.</p></div><div className={styles.boundary}><span className={styles.light} aria-hidden="true"/><strong>No live agents in this room.</strong><p>These are recorded reviews. A selected correction is a local decision, not a repair or a Factory edit.</p><span>Live challenges unavailable · no runtime agent endpoint</span></div></div>
    {loading && <section className={styles.load} role="status"><span className={styles.eyebrow}>COLLECTED EVIDENCE</span><h2>Opening the evidence room…</h2><p>Waiting for the server snapshot. No findings are inferred while loading.</p></section>}
    {error && <section className={styles.load} role="alert"><h2>Evidence unavailable</h2><p>{error}</p><p>Coverage unknown. No review can be shown without a snapshot.</p><button onClick={() => setRetry(value => value + 1)}>Retry evidence request</button></section>}
    {snapshot && <>
     <section className={styles.snapshot} aria-label="Snapshot provenance"><div><span className={styles.eyebrow}>PRESERVED SNAPSHOT</span><h2>{snapshot.title}</h2><code>{snapshot.id}</code><p>Captured <Stamp value={snapshot.capturedAt}/></p></div><div><strong>Coverage</strong><p>{snapshot.coverage || 'Unknown — no coverage statement supplied.'}</p><small>Anything not represented in these sources is unknown. Digests are local fingerprints, not authoritative revisions.</small></div></section>
+    <section className={styles.spriteRoom} aria-label="Recorded reviewer floor">
+     <div className={styles.sectionTitle}><h2>Walk the Drift Room</h2><span>LOCAL MOVEMENT · RECORDED FINDINGS</span></div>
+     <FactoryScene drift view={null} request={walkRequest} onNearby={setNearby} paused={!!source}
+      onInspect={id => { const index = DRIFT_STATIONS.findIndex(station => station.id === id); const item = snapshot.reviews.find(item => item.role === stations[index]?.role); if (item) select(item); }}/>
+     <div className={styles.walkButtons}>{DRIFT_STATIONS.map((station, index) => <button key={station.id} disabled={!snapshot.reviews.some(item => item.role === stations[index].role)} onClick={() => setWalkRequest({ id:station.id, nonce:Date.now() })}>Walk to {station.title}</button>)}<button onClick={() => { const first = snapshot.reviews.find(item => item.role === 'intent'); if(first) select(first); }}>Replay recorded review</button></div>
+     <p>{nearby ? `${DRIFT_STATIONS.find(item => item.id === nearby)?.title} nearby — press E to inspect.` : 'Walk to a reviewer, or use the direct reviewer buttons below.'} Movement is presentation, not live agent activity.</p>
+    </section>
     <div className={styles.workroom}>
      <section className={styles.council} aria-label="Reviewer council">
       <div className={styles.sectionTitle}><h2>Reviewer stations</h2><span>DIRECT NAVIGATION · KEYBOARD READY</span></div>
