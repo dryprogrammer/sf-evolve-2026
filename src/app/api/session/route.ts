@@ -1,0 +1,3 @@
+import { FactoryError, principals } from '@/lib/contracts';
+import { body, errorResponse, sameOrigin } from '@/lib/http';
+export async function POST(request:Request){try{sameOrigin(request);const {principalId}=await body(request) as {principalId:unknown};if(!principals.some(p=>p.id===principalId))throw new FactoryError('validation','Select a known fixture persona.');return Response.json({ok:true},{headers:{'Set-Cookie':`factory_persona=${principalId}; Path=/; HttpOnly; SameSite=Strict${new URL(request.url).protocol==='https:'?'; Secure':''}`,'Cache-Control':'no-store'}});}catch(e){return errorResponse(e);} }

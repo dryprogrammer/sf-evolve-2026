@@ -1,0 +1,20 @@
+import { afterEach, describe,it,expect } from 'vitest';
+import { randomUUID } from 'node:crypto';
+import { mkdtemp,rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { Command,FactoryView,principals } from '../src/lib/contracts';
+import { FactoryStore } from '../src/lib/store';
+const maya=principals[0],alex=principals[1];
+const stores:FactoryStore[]=[];
+const make=()=>{const s=new FactoryStore();stores.push(s);return s;};
+const c=(v:FactoryView,operation:Command['operation'],payload:Record<string,unknown>={},roundId?:string):Command=>({operation,payload,roundId,expectedVersion:v.version,idempotencyKey:randomUUID()});
+afterEach(async()=>{for(const s of stores.splice(0))await s.close();});
+describe('transactional persistence',()=>{
+ it('persists private drafts, detects conflicts and retains monotonically increasing discard versions',async()=>{const s=make();let v=await s.get(maya);const save=c(v,'save_draft',{text:'Private evidence',snapshotId:v.snapshot.id,draftVersion:0});v=await s.execute(maya,save);expect(v.draft?.text).toBe('Private evidence');expect((await s.get(alex)).draft).toBeNull();await expect(s.execute(maya,{...save,idempotencyKey:randomUUID()})).rejects.toThrow('another session');v=await s.execute(maya,c(v,'discard_draft',{draftVersion:1}));expect(v.draft?.text).toBe('');expect(v.draft?.version).toBe(2);await expect(s.execute(maya,c(v,'save_draft',{text:'stale',snapshotId:v.snapshot.id,draftVersion:1}))).rejects.toThrow('another session');});
+ it('reconciles identical retries and rejects same key with new content',async()=>{const s=make();const v=await s.get(maya),cmd=c(v,'create_round');await s.execute(maya,cmd);const repeated=await s.execute(maya,cmd);expect(repeated.rounds).toHaveLength(1);expect(repeated.history).toHaveLength(1);await expect(s.execute(maya,{...cmd,payload:{different:true}})).rejects.toThrow('different content');});
+ it('serializes competing commands and rolls back failure without receipt',async()=>{const s=make();const v=await s.get(maya);const result=await Promise.allSettled([s.execute(maya,c(v,'create_round')),s.execute(maya,c(v,'create_round'))]);expect(result.filter(x=>x.status==='fulfilled')).toHaveLength(1);expect((await s.get(maya)).rounds).toHaveLength(1);const saved=await s.get(maya);await expect(s.execute(maya,c(saved,'publish',{},saved.rounds[0].id))).rejects.toThrow();expect((await s.get(maya)).version).toBe(saved.version);});
+ it('recovers confirmed state after database reopen',async()=>{const dir=await mkdtemp(path.join(tmpdir(),'factory-'));const s=new FactoryStore(dir);let v=await s.get(maya);v=await s.execute(maya,c(v,'save_draft',{text:'Retained on restart',snapshotId:v.snapshot.id,draftVersion:0}));await s.close();const reopened=new FactoryStore(dir);try{expect((await reopened.get(maya)).draft?.text).toBe('Retained on restart');}finally{await reopened.close();await rm(dir,{recursive:true,force:true});}});
+ it('redacts both historical and current evidence and drafts after detected revocation',async()=>{const s=make();let v=await s.get(maya);v=await s.execute(maya,c(v,'create_round'));v=await s.execute(maya,c(v,'save_draft',{text:'Secret',snapshotId:v.snapshot.id,draftVersion:0}));v=await s.execute(maya,c(v,'simulate_revoke',{permitted:false}));expect(v.snapshot.evidence.every(e=>!e.content)).toBe(true);expect(v.work.evidence.every(e=>!e.content)).toBe(true);expect(v.rounds).toEqual([]);expect(v.draft).toBeNull();await expect(s.execute(alex,c(v,'create_round'))).rejects.toThrow('cannot be verified');v=await s.execute(maya,c(v,'simulate_revoke',{permitted:true}));expect(v.rounds).toHaveLength(1);expect(v.draft?.text).toBe('Secret');});
+ it('SQL constraint independently rejects two open rounds',async()=>{const s=make();await s.get(maya);await expect(s.db.query("UPDATE factory_state SET document=jsonb_set(document, '{rounds}', '[{\"state\":\"open\"},{\"state\":\"open\"}]')")).rejects.toThrow();});
+});
