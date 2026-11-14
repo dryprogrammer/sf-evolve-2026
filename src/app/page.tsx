@@ -60,6 +60,10 @@ export default function FactoryFloor() {
         else setRetry(null);
         throw e;
       }
+      if (view && next.principal.id !== view.principal.id) {
+        setDraft(next.draft?.text ?? ''); setFeedback(''); setDisposition('advice');
+        setSelected(next.rounds.at(-1)?.id ?? '');
+      }
       setView(next); setRetry(null);
       if (command.operation === 'create_round') setSelected(next.rounds.at(-1)?.id ?? '');
       if (command.operation === 'discard_draft') setDraft('');
