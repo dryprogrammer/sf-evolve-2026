@@ -1,0 +1,26 @@
+{
+  "verifiedCodeRevision": "b75d168a80a2e0e548b9886aff3b2454a8a99470",
+  "capturedAt": "2026-11-14T21:36:48.193779+00:00",
+  "checks": {
+    "typecheck": "passed",
+    "productionBuild": "passed",
+    "unitServiceTests": 95,
+    "fixtureProductionBrowserJourneys": 15
+  },
+  "sourceHashes": {
+    "src/lib/judgment.ts": "bc6a64947a1b025754e77af5e719844a7752b0d6fbe61b1fe7e8535fae20c610",
+    "src/lib/review.ts": "e29bb8aa00b714d0c21bfbb8af6c3cabee9fc283cd6c4d0d7ffcd0f1f084e4ab",
+    "src/lib/contracts.ts": "045f6c54ba82746b9a683ee86dded817b4ba6c6d1f56ecf2d0037c5a70572b11",
+    "src/components/JudgmentHandoff.tsx": "fc6a25dbf1616fadb031d041a890ac7577eaa699d808bc8ff34e44ff8d6544ba",
+    "src/components/WorkInspector.tsx": "5a90d15b7f5b5aecec497e3655ae2c20bb35e537fc50f28d5d36a8c05eed1c5f",
+    "tests/judgment.test.ts": "9e0a3bc9d7d7aaa31dbfe76e730c473059cd2a95248cda342540f5181555c84c",
+    "tests/judgment-store.test.ts": "8a592c1d22b0712bd7bd038453618c7fccddf3d3e6662001d43e1d9497036f24",
+    "tests/browser/judgment.spec.ts": "f1b48406e7a5780faf1d46d0a4ec4b18f7e93c04fbd2200b4297974ea5419eff"
+  },
+  "boundaries": [
+    "Fictional fixture DEMO-1 only",
+    "Deterministic acceptance proposal; no LLM or MCP round-trip",
+    "Clarification does not approve or change code/source",
+    "API-backed Factory proof from base is separate and was not rerun"
+  ]
+}
