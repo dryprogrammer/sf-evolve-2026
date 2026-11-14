@@ -1,0 +1,3 @@
+# Drift Room evidence contract v1
+
+`src/lib/drift/contracts.ts` is frozen for this slice. Snapshot IDs fingerprint the collected payload; source digests are not authoritative revisions. Factory adapter obtains two matching bounded reads; this is not a transaction. Repository observations refer to the exact PR #6 foundation, never this pivot's changes. Review imports must cite literal substrings of available sources, match the snapshot, and retain uncertainty/dissent. All activity is recorded, never live. Local decisions retain the complete snapshot and are not source edits or completed repairs. No runtime agent launch or challenge endpoint exists in this slice.
