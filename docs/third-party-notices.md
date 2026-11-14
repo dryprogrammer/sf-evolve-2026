@@ -4,11 +4,11 @@ This is a package-lock metadata inventory, not a legal audit or declaration of e
 
 ## Code and assets
 
-- Reused PR #2 at `480210bef24563e19793d48cde30f993182acca3`: local persistence, review engine, privacy/recovery, and original walkable sprite factory. This is prior foundation work, not all newly built in this delivery window.
+- Reused PR #2 at `480210bef24563e19793d48cde30f993182acca3`: local persistence, review engine, privacy/recovery, and original walkable sprite factory. Built during the event (Nov 14, 2:02–3:06 AM PT), before this later delivery window; it is not pre-event work.
 - This sprint adds attention/action projection, source links and evidence chain, real bounded renewal example/tests, scripted perspectives, focused stale-review verification, and submission documentation.
 - Software Factory AI assistance and bounded parallel workers were used to write/review implementation, tests and documentation. They are a build method, not a delivered runtime orchestration service or independent human reviewers.
 - Pixel rendering is repository code; avatars use Unicode emoji rendered by the browser/system. No downloaded stock avatar or voice assets were added. Optional voice uses the browser speech API; no ElevenLabs integration is claimed. Check the browser/OS voice availability and terms before recording audio.
-- No sponsor-provider credentials, live 8090 integration, third-party customer records, external messaging or hardware control are used.
+- No sponsor-provider credentials, third-party customer records, external messaging or hardware control are used. The 8090 Software Factory external API is used server-side for evidence reads (see README).
 
 ## Locked package metadata (entries not marked dev or optional)
 
