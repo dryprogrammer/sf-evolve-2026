@@ -15,7 +15,7 @@ async function responseView(response: Response): Promise<FactoryView> {
   return data as FactoryView;
 }
 
-export default function WorkInspector({ onViewChange, onBlockedChange, personaRequest }: { onViewChange: (view:FactoryView|null)=>void; onBlockedChange: (blocked:boolean)=>void; personaRequest:{id:string}|null }) {
+export default function WorkInspector({ onViewChange, onBlockedChange, personaRequest, attentionRequest }: { onViewChange: (view:FactoryView|null)=>void; onBlockedChange: (blocked:boolean)=>void; personaRequest:{id:string}|null; attentionRequest?:{target:string;nonce:number}|null }) {
   const [view, setView] = useState<FactoryView | null>(null);
   const [selected, setSelected] = useState('');
   const [draft, setDraft] = useState('');
@@ -41,6 +41,13 @@ export default function WorkInspector({ onViewChange, onBlockedChange, personaRe
     }).catch(e => { if (active) setError(String(e.message)); }).finally(() => { if (active) setLoaded(true); });
     return () => { active = false; };
   }, []);
+
+  useEffect(() => {
+    if (!attentionRequest) return;
+    setSelected(view?.rounds.at(-1)?.id ?? '');
+    const timer=setTimeout(() => {const target=document.getElementById(attentionRequest.target);target?.scrollIntoView({block:'start'});}, 50);
+    return () => clearTimeout(timer);
+  }, [attentionRequest]);
 
   const round = view?.rounds.find(item => item.id === selected);
   const blocked = busy || !!retry;
