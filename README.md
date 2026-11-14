@@ -1,6 +1,6 @@
 # Software Factory Foreman
 
-Every sign-off gets a SHA-256. Change the source in Software Factory and the old approval gets a 409.
+Agents do the work. Foreman makes sure the right person signs off, on the version they actually read.
 
 Built at EVOLVE: 8090 AI Hackathon, Nov 13–14, 2026.
 
