@@ -85,6 +85,7 @@ export default function WorkInspector({ onViewChange, onBlockedChange, personaRe
       return true;
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Request failed. Your text has been retained.';
+      if(message.startsWith('unverifiable_evidence:')) setView(null);
       if (message.startsWith('source_denied:') || message.startsWith('persona_changed:')) {
         // Detected access/session changes invalidate every old protected projection immediately.
         setView(null); setDraft(''); setFeedback(''); setSelected(''); setDisposition('advice'); setRetry(null);
@@ -121,7 +122,7 @@ export default function WorkInspector({ onViewChange, onBlockedChange, personaRe
       }
       setSelected(previous => next.rounds.some(r => r.id === previous) ? previous : (next.rounds.at(-1)?.id ?? ''));
       setNotice('Latest server state loaded.');
-    } catch (e) { setError(e instanceof Error ? e.message : 'Unable to load fixture state.'); }
+    } catch (e) { if(e instanceof Error&&(e.message.startsWith('source_denied:')||e.message.startsWith('unverifiable_evidence:'))) setView(null); setError(e instanceof Error ? e.message : 'Unable to load source state.'); }
     finally { lock.current = false; setBusy(false); }
   }
 
@@ -135,18 +136,18 @@ export default function WorkInspector({ onViewChange, onBlockedChange, personaRe
       {!view ? <section className="panel"><h2>{loaded ? 'Fixture state unavailable' : 'Loading fixture context…'}</h2><p>Private review content is not shown until the server confirms the active persona.</p>{loaded && <button disabled={busy} onClick={() => void reload()}>Try loading again</button>}</section> : <>
         <div className="work-heading"><div><p className="eyebrow">{view.work.id} · {view.work.status}</p><h2>{view.work.title}</h2></div><button disabled={blocked} onClick={() => void reload()}>Reload server state</button></div>
         <NeedsYou view={view} onAction={target => { setSelected(view.rounds.at(-1)?.id ?? ''); setTimeout(() => document.getElementById(target)?.scrollIntoView({ block: 'start' }), 0); }} /><div className="columns"><div className="context-column">
-          <section className="panel" id="demo-evidence"><div className="section-heading"><h2>Context & evidence</h2><span className="badge">Fixture source</span></div><p>{view.work.description}</p>
+          <section className="panel" id="demo-evidence"><div className="section-heading"><h2>Context & evidence</h2><span className="badge">{view.sourceMode==='factory'?'Factory API source':'Fixture source'}</span></div><p>{view.work.description}</p>
             <div className="source-status" role="status"><strong>{view.work.sourceAvailable ? 'Source available' : 'Source unavailable — verification blocked'}</strong><p>Source v{view.work.sourceVersion} · saved context v{view.snapshot.sourceVersion}</p>{view.work.sourceVersion !== view.snapshot.sourceVersion && <p className="warning-text">Source changed. Refresh the saved context before continuing.</p>}{round && round.snapshot.sourceVersion !== view.work.sourceVersion && <p className="warning-text">Selected round reviews an older snapshot. Server verification determines whether an outcome is available.</p>}</div>
             <button disabled={blocked} onClick={() => void send('refresh', {})}>Refresh saved context</button>
-            <p className="muted small">Refresh is a fixture command, not live synchronization. Unsent text is preserved.</p>
-            <EvidencePanel view={view} round={round} />
+            <p className="muted small">{view.sourceMode==='factory'?'Refresh saves the verified Factory basis. Old sign-offs remain stale; a new review is required.':'Refresh is a fixture command, not live synchronization.'} Unsent text is preserved.</p>
+            {view.work.sourceCoverage&&<details><summary>Evidence coverage & limits</summary><p className="small">{view.work.sourceCoverage}</p><p className="small">Last complete retrieval {date(view.work.sourceRetrievedAt??view.snapshot.retrievedAt)}. Stable double-read, not an atomic Factory transaction. Review identities are fictional local personas.</p></details>}<EvidencePanel view={view} round={round} />
           </section>
           <section className="panel"><div className="section-heading"><h2>Private draft</h2><span className="badge">Only {name(view.principal.id)}</span></div><p className="muted">Not shared with reviewers. Saving does not submit feedback.</p>
             <label htmlFor="private-draft">Your working notes</label><textarea id="private-draft" rows={7} value={draft} disabled={busy} onChange={e => setDraft(e.target.value)} />
             <p className="small" role="status">{draft === (view.draft?.text ?? '') && view.draft ? `Saved · draft v${view.draft.version}` : draft ? 'Unsaved text' : 'No private draft saved'}{view.draft && <> · snapshot {view.draft.snapshotId.slice(0, 8)}{view.draft.snapshotId !== view.snapshot.id ? ' (older context)' : ''}</>}</p>
             <div className="actions"><button disabled={blocked} onClick={() => void send('save_draft', { text: draft, snapshotId: view.snapshot.id, draftVersion: view.draft?.version ?? 0 })}>Save private draft</button><button className="secondary" disabled={blocked || (!draft && !view.draft)} onClick={() => { if (window.confirm('Discard your saved private draft and unsent draft text? This cannot be undone.')) void send('discard_draft', { draftVersion: view.draft?.version ?? 0 }); }}>Discard draft…</button></div>
           </section>
-          {coordinator && <section className="panel simulation"><h2>Fixture coordinator controls</h2><p className="muted">Simulation only. These controls are not authority over live work.</p><div className="actions"><button className="secondary" disabled={blocked} onClick={() => void send('simulate_change', {})}>Simulate source change</button><button className="secondary" disabled={blocked} onClick={() => void send('simulate_outage', { available: !view.work.sourceAvailable })}>{view.work.sourceAvailable ? 'Simulate outage' : 'Restore source'}</button><button className="secondary" disabled={blocked} onClick={() => void send('simulate_revoke', { permitted: !view.work.evidence.every(e => e.permitted) })}>{view.work.evidence.every(e => e.permitted) ? 'Revoke evidence access' : 'Restore evidence access'}</button></div></section>}
+          {coordinator && view.sourceMode==='fixture' && <section className="panel simulation"><h2>Fixture coordinator controls</h2><p className="muted">Simulation only. These controls are not authority over live work.</p><div className="actions"><button className="secondary" disabled={blocked} onClick={() => void send('simulate_change', {})}>Simulate source change</button><button className="secondary" disabled={blocked} onClick={() => void send('simulate_outage', { available: !view.work.sourceAvailable })}>{view.work.sourceAvailable ? 'Simulate outage' : 'Restore source'}</button><button className="secondary" disabled={blocked} onClick={() => void send('simulate_revoke', { permitted: !view.work.evidence.every(e => e.permitted) })}>{view.work.evidence.every(e => e.permitted) ? 'Revoke evidence access' : 'Restore evidence access'}</button></div></section>}
         </div>
         <div className="review-column">
           <section className="panel" id="review-controls"><div className="section-heading"><h2>Review rounds</h2>{coordinator && <button disabled={blocked} onClick={() => void send('create_round', {})}>New round</button>}</div><p className="muted">UI actions do not confer authority. The server checks actor, version, evidence, and review gates.</p>
@@ -157,7 +158,7 @@ export default function WorkInspector({ onViewChange, onBlockedChange, personaRe
           {round && <Contributions view={view} round={round} />}
           <section className="panel"><h2>Audit history</h2>{view.history.length ? <ol className="timeline">{[...view.history].reverse().map(item => <li key={item.id}><strong>{item.type.replaceAll('_', ' ')}</strong><p>{item.detail}</p><small>{name(item.actorId)} · {date(item.createdAt)}{item.roundId ? ` · round ${view.rounds.findIndex(r => r.id === item.roundId) + 1}` : ''}</small></li>)}</ol> : <p className="muted">Confirmed fixture actions will appear here.</p>}</section>
         </div></div>
-        <EvidenceChain view={view} round={round} /><footer>Fixture demonstration · aggregate version {view.version} · server-confirmed state, not live Software Factory data</footer>
+        <EvidenceChain view={view} round={round} /><footer>Demo identities · aggregate version {view.version} · {view.sourceMode==='factory'?'authoritative Factory evidence; local review enforcement, not native Factory approval':'server-confirmed fixture state, not live Software Factory data'}</footer>
       </>}
     </div>
   </>;
@@ -168,7 +169,7 @@ function EvidencePanel({ view, round }: { view: FactoryView; round?: Round }) {
   return <div className="evidence"><h3>{round ? 'Selected round’s immutable evidence' : 'Saved evidence snapshot'}</h3><p className="small muted">Retrieved {date(snapshot.retrievedAt)} · snapshot {snapshot.id.slice(0, 8)}</p>{snapshot.evidence.map(e => {
     const current = view.work.evidence.find(item => item.id === e.id);
     const permitted = e.permitted && current?.permitted === true;
-    return <article key={e.id} className="evidence-card"><div className="section-heading"><h4>{permitted ? e.title : 'Restricted evidence'}</h4><span className="badge">{permitted ? `v${e.version}` : 'Access denied'}</span></div>{permitted ? <><p className="preserve">{e.content}</p>{e.sourceRef && <p className="small"><a href={e.sourceRef} target="_blank" rel="noreferrer">Inspect committed seed source</a> · local fixture v{e.version}; simulated revisions do not update this Git source.</p>}{!e.complete && <p className="warning-text">Evidence incomplete — server verification may block approval.</p>}</> : <p className="warning-text">You do not have permission to view this evidence. Its contents are hidden.</p>}</article>;
+    return <article key={e.id} className="evidence-card"><div className="section-heading"><h4>{permitted ? e.title : 'Restricted evidence'}</h4><span className="badge">{permitted ? `v${e.version}` : 'Access denied'}</span></div>{permitted ? <><p className="preserve">{e.content}</p>{e.sourceRef && <p className="small"><a href={e.sourceRef} target="_blank" rel="noreferrer">{e.provenance?'Inspect authoritative Factory source':'Inspect committed seed source'}</a>{e.provenance?<> · resource {e.provenance.resourceId}{e.provenance.supplemental?' · explicitly configured supplemental demo evidence':''}<br/>Revision {e.provenance.revisionId??'no revision ID exposed; content digest used'} · updated {date(e.provenance.updatedAt)}<br/><code className="digest">{e.provenance.contentDigest}</code></>:<> · local fixture v{e.version}; simulated revisions do not update this Git source.</>}</p>}{!e.complete && <p className="warning-text">Evidence incomplete — server verification may block approval.</p>}</> : <p className="warning-text">You do not have permission to view this evidence. Its contents are hidden.</p>}</article>;
   })}<details><summary>Snapshot fingerprint</summary><code className="digest">{snapshot.digest}</code></details></div>;
 }
 

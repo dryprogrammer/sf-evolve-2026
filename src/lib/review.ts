@@ -19,7 +19,7 @@ export function transition(current:Aggregate,actor:Principal,command:Command):Ag
   if(command.operation==='simulate_revoke') { if(typeof p.permitted!=='boolean') fail('validation','Permission must be a boolean.'); a.work.evidence.forEach(e=>e.permitted=p.permitted as boolean); }
   record(command.operation,'Fixture source condition changed.');
  } else if(command.operation==='refresh') {
-  sourceAccessible(); const next=snapshot(a.work); if(next.digest===a.snapshot.digest) next.id=a.snapshot.id; a.snapshot=next; record('refresh','Retrieved current persisted fixture evidence.');
+  sourceAccessible(); const next=snapshot(a.work); if(next.digest===a.snapshot.digest) next.id=a.snapshot.id; a.snapshot=next; record('refresh',a.work.evidence.some(e=>e.provenance)?'Saved verified authoritative Factory evidence.':'Retrieved current persisted fixture evidence.');
  } else if(command.operation==='create_round') {
   coordinator(actor); sourceAccessible(); const r:Round={id:randomUUID(),state:'draft',snapshot:structuredClone(a.snapshot),decisionMakerId:'',assignments:[],feedback:[],signoffs:[]}; a.rounds.push(r); record('create_round','Created an unassigned draft review.',r);
  } else {
