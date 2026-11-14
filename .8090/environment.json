@@ -1,5 +1,10 @@
 {
-  "name": "Human-led factory pilot",
+  "name": "Drift Room \u2014 recorded local demo",
   "install": "npm ci",
-  "terminals": [{ "name": "factory-pilot", "command": "npm run dev:fixture -- --port 3000" }]
+  "terminals": [
+    {
+      "name": "drift-room",
+      "command": "npm run dev:drift -- --port 3000"
+    }
+  ]
 }

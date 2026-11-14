@@ -1,3 +1,27 @@
+# Drift Room — simple recorded demo (DR7K)
+
+Continue PR #11 on `8090/chat-drift-room-f7c7ea`; this is stacked on the existing private foundation branch, not a replacement for PR #6.
+
+```sh
+npm ci
+npm run dev:drift -- --port 3000
+# Open http://localhost:3000/drift-room (the root redirects in this mode).
+```
+
+The workspace configuration starts this mode automatically. No OpenRouter key, Factory key, database, or live agent is needed for the Drift Room path. The legacy fixture app remains available using `npm run dev:fixture` instead.
+
+**Demo:** walk to Intent, Delivery, or Skeptic and press E (or use the direct reviewer buttons); inspect a finding and its collected sources; enter a rationale and select a proposed correction; reload to see the saved selection. It stays in this browser only—not a repair, approval, or Factory edit. Storage failures and invalid evidence are shown explicitly.
+
+The endpoint serves a **recorded real export**, not a runtime Factory integration: two complete Factory documents and the exact `src/lib/factory-source.ts` file from PR #6 commit `48b1ec0cdf75ab2f07b7c4098e75dc26560f3705`. The snapshot preserves source URLs, available revisions, retrieval times, SHA-256 local fingerprints, and collection limitations. Three independent read-only agent reviews were recorded against that same export; invalid first-pass citations were rejected and corrected before import. Other records, child requirements, comments, and code were not audited. Findings are diagnostic proposals, not established defects or automatic instructions.
+
+**Keep this demo private.** The bundled evidence and browser storage do not re-check current source permissions. No production authentication, multi-user access control, live refresh, or live model invocation is delivered. Nothing was pushed to the public demo repository.
+
+Verification commands: `npm test`, `npm run typecheck`, `npm run build`, `npm run test:e2e`. Browser tests distinguish mocked API responses from the actual local recorded endpoint; neither proves current upstream access.
+
+---
+
+## Earlier foundation handoff (historical)
+
 # The Factory — a walkable sprite workshop
 
 > **2026-11-14 API/UI follow-on:** The default UI is now the selected native, record-centered Work Orders view. An opt-in **server-side Factory API evidence adapter** is implemented and live-tested; the fixture fallback remains separate. A real edit to a labeled supplemental Factory demo document changed the review basis and produced HTTP 409 `changed_evidence` before and after refresh. See [the current integration handoff](docs/api-ui-delivery.md) and [sanitized live proof](docs/evidence/factory-live-proof.json). MCP clarification is **deferred**, not a delivered round-trip. Selectable personas are still fictional local identities, not production authentication, independent reviewers, or native Factory approval. Historical fixture-only statements below describe the earlier checkpoint.

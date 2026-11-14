@@ -3,10 +3,11 @@ import { useEffect, useRef, useState } from 'react';
 import type { FactoryView } from '@/lib/contracts';
 import { drawFactory } from './render';
 import { routeTo } from './navigation';
-import { WORLD, SPAWN, STATIONS, nearbyStation, stationAt, walkable, type Point, type SceneState, type StationId } from './world';
+import { WORLD, SPAWN, STATIONS, DRIFT_STATIONS, stationAt, walkable, type Point, type SceneState, type StationId } from './world';
 export interface NavigationRequest { id:StationId; nonce:number; }
-interface Props { view:FactoryView|null; request:NavigationRequest|null; onNearby:(id:StationId|null)=>void; onInspect:(id:StationId)=>void; paused:boolean; }
+interface Props { drift?:boolean; view:FactoryView|null; request:NavigationRequest|null; onNearby:(id:StationId|null)=>void; onInspect:(id:StationId)=>void; paused:boolean; }
 export default function FactoryScene(props:Props) {
+ const sceneStations=props.drift?DRIFT_STATIONS:STATIONS;
  const canvas=useRef<HTMLCanvasElement>(null);
  const propsRef=useRef(props);propsRef.current=props;
  const position=useRef<Point>({...SPAWN}),path=useRef<Point[]>([]),keys=useRef(new Set<string>()),facing=useRef<SceneState['facing']>('down');
@@ -16,9 +17,9 @@ export default function FactoryScene(props:Props) {
   const route=routeTo(position.current,to);
   if(!route){setMessage('That spot is blocked. Choose an open aisle or a workstation.');return;}
   path.current=route;target.current=id;keys.current.clear();
-  setMessage(id?`Walking to ${STATIONS.find(s=>s.id===id)?.title}. Press E when you arrive.`:'Walking through the workshop.');canvas.current?.focus({preventScroll:true});
+  setMessage(id?`Walking to ${sceneStations.find(s=>s.id===id)?.title}. Press E when you arrive.`:'Walking through the workshop.');canvas.current?.focus({preventScroll:true});
  }
- useEffect(()=>{ if(props.request){const station=STATIONS.find(s=>s.id===props.request?.id);if(station)travel(station.entry,station.id);} },[props.request]);
+ useEffect(()=>{ if(props.request){const station=sceneStations.find(s=>s.id===props.request?.id);if(station)travel(station.entry,station.id);} },[props.request]);
  useEffect(()=>{if(props.paused){keys.current.clear();path.current=[];}},[props.paused]);
  useEffect(()=>{
   const element=canvas.current;const ctx=element?.getContext('2d');if(!element||!ctx)return;
@@ -40,11 +41,11 @@ export default function FactoryScene(props:Props) {
      else{const nx={x:p.x+dx*step,y:p.y};if(walkable(nx)){p.x=nx.x;moving=true;}const ny={x:p.x,y:p.y+dy*step};if(walkable(ny)){p.y=ny.y;moving=true;}}
      if(Math.abs(dx)>Math.abs(dy))facing.current=dx<0?'left':'right';else facing.current=dy<0?'up':'down';}
    }
-   const nearest=nearbyStation(position.current)?.id??null;
-   if(nearest!==near.current){near.current=nearest;propsRef.current.onNearby(nearest);if(nearest)setMessage(`${STATIONS.find(s=>s.id===nearest)?.title} nearby. Press E or Enter to inspect.`);}
+   const nearest=(propsRef.current.drift?DRIFT_STATIONS:STATIONS).find(s=>Math.hypot(s.entry.x-position.current.x,s.entry.y-position.current.y)<72)?.id??null;
+   if(nearest!==near.current){near.current=nearest;propsRef.current.onNearby(nearest);if(nearest)setMessage(`${sceneStations.find(s=>s.id===nearest)?.title} nearby. Press E or Enter to inspect.`);}
    const round=view?.rounds.at(-1),hasAccess=!!view&&view.work.evidence.every(e=>e.permitted);
    const pending=round?.assignments.filter(a=>a.responsibility==='required'&&round.signoffs.filter(s=>s.assignmentId===a.id&&s.generation===a.generation).at(-1)?.outcome!=='approve').length??0;
-   drawFactory(ctx!,{player:position.current,facing:facing.current,moving,time:now,reducedMotion:reduced,selected:target.current,destination:path.current.at(-1)??null,nearby:nearest,principalId:view?.principal.id??'maya',reviewState:hasAccess?(round?.state??'not_requested'):'unavailable',pending:hasAccess?pending:0,sourceAvailable:view?.work.sourceAvailable??false,hasAccess});
+   drawFactory(ctx!,{drift:propsRef.current.drift,player:position.current,facing:facing.current,moving,time:now,reducedMotion:reduced,selected:target.current,destination:path.current.at(-1)??null,nearby:nearest,principalId:propsRef.current.drift?'observer':view?.principal.id??'maya',reviewState:hasAccess?(round?.state??'not_requested'):'unavailable',pending:hasAccess?pending:0,sourceAvailable:propsRef.current.drift||view?.work.sourceAvailable||false,hasAccess});
    element!.dataset.playerX=position.current.x.toFixed(1);element!.dataset.playerY=position.current.y.toFixed(1);element!.dataset.nearby=nearest??'';element!.dataset.reducedMotion=String(reduced);
    frame=requestAnimationFrame(update);
   }
@@ -57,7 +58,7 @@ export default function FactoryScene(props:Props) {
  function step(dx:number,dy:number){travel({x:position.current.x+dx*WORLD.tile,y:position.current.y+dy*WORLD.tile},null);}
  return <>
   <div className="scene-window">
-   <canvas ref={canvas} width={WORLD.width} height={WORLD.height} tabIndex={0} role="application" aria-label="Walkable 2D sprite factory" aria-describedby="factory-controls" onBlur={()=>keys.current.clear()} onKeyDown={event=>{if(event.ctrlKey||event.metaKey||event.altKey)return;const key=event.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright','w','a','s','d'].includes(key)){event.preventDefault();keys.current.add(key);}if(['e','enter'].includes(key)){event.preventDefault();if(!event.repeat)interact();}}} onKeyUp={event=>keys.current.delete(event.key.toLowerCase())} onPointerDown={event=>{const rect=event.currentTarget.getBoundingClientRect();const point={x:(event.clientX-rect.left)*WORLD.width/rect.width,y:(event.clientY-rect.top)*WORLD.height/rect.height};const station=stationAt(point);travel(station?.entry??point,station?.id??null);}} />
+   <canvas ref={canvas} width={WORLD.width} height={WORLD.height} tabIndex={0} role="application" aria-label={props.drift?'Walkable Drift Room':'Walkable 2D sprite factory'} aria-describedby="factory-controls" onBlur={()=>keys.current.clear()} onKeyDown={event=>{if(event.ctrlKey||event.metaKey||event.altKey)return;const key=event.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright','w','a','s','d'].includes(key)){event.preventDefault();keys.current.add(key);}if(['e','enter'].includes(key)){event.preventDefault();if(!event.repeat)interact();}}} onKeyUp={event=>keys.current.delete(event.key.toLowerCase())} onPointerDown={event=>{const rect=event.currentTarget.getBoundingClientRect();const point={x:(event.clientX-rect.left)*WORLD.width/rect.width,y:(event.clientY-rect.top)*WORLD.height/rect.height};const hit=stationAt(point);const station=sceneStations.find(s=>s.id===hit?.id);travel(station?.entry??point,station?.id??null);}} />
    <div className="scene-stamp"><i/><span>SIMULATED PRESENCE</span></div>
   </div>
   <div className="scene-controls" id="factory-controls"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / arrows to walk <b>·</b> <kbd>E</kbd> to inspect</span><span className="click-hint">or click a workstation <span aria-hidden="true">↗</span></span></div>
