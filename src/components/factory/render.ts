@@ -606,6 +606,8 @@ export function drawFactory(ctx: CanvasRenderingContext2D, state: SceneState): v
     const principal = Object.hasOwn(PALETTES, state.principalId) ? state.principalId as HumanId : 'observer';
     npcs.forEach((npc, index) => {
       if (npc.id === principal) return;
+      // In the shared room, people are real independent sessions, not desk NPCs.
+      if (state.roomMode && npc.id !== 'robot') return;
       // A tiny head/body idle shift, not fictitious activity or live presence.
       const idle = !state.reducedMotion && Math.sin(state.time / 1300 + index * 2) > .92 ? -1 : 0;
       layers.push({ y: npc.y, draw: () => {
@@ -617,6 +619,23 @@ export function drawFactory(ctx: CanvasRenderingContext2D, state: SceneState): v
         }
       } });
     });
+    for (const remote of state.remotes ?? []) {
+      const rx = Math.round(remote.x), ry = Math.round(remote.y);
+      const id = Object.hasOwn(PALETTES, remote.participantId) ? remote.participantId as HumanId : null;
+      if (!id) continue;
+      layers.push({ y: ry, draw: () => {
+        // Disconnected sessions fade; their outstanding work is not resolved or hidden.
+        ctx.save();
+        if (!remote.connected) ctx.globalAlpha = .4;
+        footShadow(ctx, rx, ry);
+        human(ctx, id, rx, ry, remote.facing, 0);
+        const label = remote.connected ? remote.label : `${remote.label} · offline`;
+        const width = Math.max(44, label.length * 6.4 + 12);
+        rect(ctx, rx - width / 2, ry - 77, width, 17, remote.connected ? '#fbf7e6' : '#e4e1d3');
+        text(ctx, label, rx, ry - 68, 10, remote.connected ? '#3d5650' : '#6f746c', 'center');
+        ctx.restore();
+      } });
+    }
     const px = Math.round(state.player.x), py = Math.round(state.player.y);
     const step = state.moving && !state.reducedMotion ? (Math.floor(state.time / 130) % 2 ? 2 : -2) : 0;
     layers.push({ y: py, draw: () => {

@@ -15,7 +15,9 @@ async function responseView(response: Response): Promise<FactoryView> {
   return data as FactoryView;
 }
 
-export default function WorkInspector({ onViewChange, onBlockedChange, personaRequest, attentionRequest }: { onViewChange: (view:FactoryView|null)=>void; onBlockedChange: (blocked:boolean)=>void; personaRequest:{id:string}|null; attentionRequest?:{target:string;nonce:number}|null }) {
+type Api = (path: string, init?: RequestInit) => Promise<Response>;
+export interface SyncRequest { nonce: number; revision?: number; }
+export default function WorkInspector({ onViewChange, onBlockedChange, personaRequest, attentionRequest, api = (path, init) => fetch(path, init), syncRequest = null, onAccessLost }: { onViewChange: (view:FactoryView|null)=>void; onBlockedChange: (blocked:boolean)=>void; personaRequest:{id:string}|null; attentionRequest?:{target:string;nonce:number}|null; api?: Api; syncRequest?: SyncRequest|null; onAccessLost?: (message:string)=>void }) {
   const [view, setView] = useState<FactoryView | null>(null);
   const [selected, setSelected] = useState('');
   const [draft, setDraft] = useState('');
@@ -34,7 +36,7 @@ export default function WorkInspector({ onViewChange, onBlockedChange, personaRe
 
   useEffect(() => {
     let active = true;
-    fetch('/api/factory', { cache: 'no-store' }).then(responseView).then(next => {
+    api('/api/factory', { cache: 'no-store' }).then(responseView).then(next => {
       if (!active) return;
       setView(next); setDraft(next.draft?.text ?? '');
       setSelected(next.rounds.at(-1)?.id ?? '');
@@ -49,6 +51,27 @@ export default function WorkInspector({ onViewChange, onBlockedChange, personaRe
     return () => clearTimeout(timer);
   }, [attentionRequest]);
 
+  // Shared-room reconciliation: refresh the confirmed projection WITHOUT touching
+  // unsent contribution/draft text, and defer while a command is in flight.
+  const pendingSync = useRef(false);
+  async function reconcile() {
+    if (lock.current || retry) { pendingSync.current = true; return; }
+    pendingSync.current = false;
+    try {
+      const response = await api('/api/factory', { cache: 'no-store' });
+      if (response.status === 401) { setView(null); setDraft(''); setFeedback(''); setSelected(''); onAccessLost?.('Your room session ended.'); return; }
+      const next = await responseView(response);
+      if (lock.current) { pendingSync.current = true; return; }
+      if (next.work.evidence.some(e => !e.permitted)) { setDraft(''); setFeedback(''); }
+      setView(previous => (previous && next.version < previous.version && next.principal.id === previous.principal.id) ? previous : next);
+      setSelected(previous => next.rounds.some(r => r.id === previous) ? previous : (next.rounds.at(-1)?.id ?? ''));
+    } catch (e) {
+      if (e instanceof Error && (e.message.startsWith('source_denied:') || e.message.startsWith('unverifiable_evidence:'))) { setView(null); setDraft(''); setFeedback(''); setError(e.message); }
+    }
+  }
+  useEffect(() => { if (syncRequest) void reconcile(); }, [syncRequest]);
+  useEffect(() => { if (!busy && !retry && pendingSync.current) void reconcile(); }, [busy, retry]);
+
   const round = view?.rounds.find(item => item.id === selected);
   const blocked = busy || !!retry;
   const human = view?.principal.kind === 'human';
@@ -61,7 +84,7 @@ export default function WorkInspector({ onViewChange, onBlockedChange, personaRe
     try {
       let response: Response;
       try {
-        response = await fetch('/api/factory', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(command) });
+        response = await api('/api/factory', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(command) });
       } catch {
         setRetry(command);
         throw new Error('Network interrupted. The outcome is unknown. Retry below uses the same command and idempotency key; your text is retained.');
@@ -86,11 +109,12 @@ export default function WorkInspector({ onViewChange, onBlockedChange, personaRe
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Request failed. Your text has been retained.';
       if(message.startsWith('unverifiable_evidence:')) setView(null);
+      if (message.startsWith('session_')) { setView(null); setDraft(''); setFeedback(''); setSelected(''); setRetry(null); onAccessLost?.(message); }
       if (message.startsWith('source_denied:') || message.startsWith('persona_changed:')) {
         // Detected access/session changes invalidate every old protected projection immediately.
         setView(null); setDraft(''); setFeedback(''); setSelected(''); setDisposition('advice'); setRetry(null);
         try {
-          const current = await responseView(await fetch('/api/factory', { cache: 'no-store' }));
+          const current = await responseView(await api('/api/factory', { cache: 'no-store' }));
           setView(current); setDraft(current.draft?.text ?? ''); setSelected(current.rounds.at(-1)?.id ?? '');
         } catch { /* Keep the protected view hidden if reconciliation is unavailable. */ }
       }
@@ -114,7 +138,7 @@ export default function WorkInspector({ onViewChange, onBlockedChange, personaRe
         const response = await fetch('/api/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ principalId }) });
         if (!response.ok) { const data = await response.json(); throw new Error(data.error?.message ?? 'Persona switch failed.'); }
       }
-      const next = await responseView(await fetch('/api/factory', { cache: 'no-store' }));
+      const next = await responseView(await api('/api/factory', { cache: 'no-store' }));
       if (next.work.evidence.some(e => !e.permitted)) { setDraft(''); setFeedback(''); }
       setView(next);
       if (principalId || !view || next.principal.id !== view.principal.id) {

@@ -19,4 +19,6 @@ export function walkable(p:Point):boolean {
 }
 export function nearbyStation(p:Point):Station|null {return STATIONS.find(s=>Math.hypot(s.entry.x-p.x,s.entry.y-p.y)<72)??null;}
 export function stationAt(p:Point):Station|null {return STATIONS.find(s=>p.x>=s.rect.x-10&&p.x<=s.rect.x+s.rect.w+10&&p.y>=s.rect.y-40&&p.y<=s.rect.y+s.rect.h+28)??null;}
-export interface SceneState { player:Point; facing:'down'|'up'|'left'|'right'; moving:boolean; time:number; reducedMotion:boolean; selected:StationId|null; destination:Point|null; nearby:StationId|null; principalId:string; reviewState:string; pending:number; sourceAvailable:boolean; hasAccess:boolean; }
+/** Another room session's last accepted position. Presence is connectivity only, never work progress. */
+export interface RemoteAvatar { sessionId:string; participantId:string; label:string; x:number; y:number; facing:'down'|'up'|'left'|'right'; connected:boolean; }
+export interface SceneState { player:Point; facing:'down'|'up'|'left'|'right'; moving:boolean; time:number; reducedMotion:boolean; selected:StationId|null; destination:Point|null; nearby:StationId|null; principalId:string; reviewState:string; pending:number; sourceAvailable:boolean; hasAccess:boolean; roomMode?:boolean; remotes?:RemoteAvatar[]; }

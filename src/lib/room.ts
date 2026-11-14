@@ -16,7 +16,7 @@ export interface RoomSession { sessionId: string; participantId: ParticipantId; 
 export interface IssuedSession extends RoomSession { token: string; }
 export interface PresenceEntry { sessionId: string; participantId: ParticipantId; name: string; x: number; y: number; facing: Facing; connected: boolean; seq: number; }
 export type RoomEvent =
-  | { type: 'hello'; instanceId: string; sessionId: string; presence: PresenceEntry[] }
+  | { type: 'hello'; instanceId: string; sessionId: string; seq: number; presence: PresenceEntry[] }
   | { type: 'presence'; seq: number; entry: PresenceEntry }
   | { type: 'presence_removed'; seq: number; sessionId: string }
   | { type: 'revision'; revision: number }
@@ -131,9 +131,10 @@ export class RoomService {
 
   subscribe(session: RoomSession, send: Subscriber['send'], close: Subscriber['close']): () => void {
     const subscriber: Subscriber = { session, send, close };
-    this.subscribers.add(subscriber);
+    // Join first (broadcast to others), then hand this client a snapshot at a known sequence.
     this.heartbeat(session);
-    send({ type: 'hello', instanceId: this.instanceId, sessionId: session.sessionId, presence: this.snapshot() });
+    this.subscribers.add(subscriber);
+    send({ type: 'hello', instanceId: this.instanceId, sessionId: session.sessionId, seq: this.seq, presence: this.snapshot() });
     return () => { this.subscribers.delete(subscriber); };
   }
   subscriberCount() { return this.subscribers.size; }
