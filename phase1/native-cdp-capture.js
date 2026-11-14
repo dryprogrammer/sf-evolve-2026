@@ -1,14 +1,14 @@
-async (page) => {
+async (page, options = {}) => {
   // Standalone browser_run_code function: no Node globals, credentials or duplicate API fetch.
   const url = await page.url();
   const match = url.match(/\/project\/([^/]+)\/agents\/([^/?#]+)/);
-  if (!match) throw new Error('Open the authorized conversation before capturing');
+  if (!url.startsWith('https://factory.8090.ai/project/') || !match) throw new Error('Open the authorized conversation before capturing');
   const [, projectId, conversationId] = match;
   const endpoint = `https://api.factory.8090.dev/v2/project/${projectId}/agents/chat-agent/stream`;
   const session = await page.context().newCDPSession(page);
   const streams = new Map(), tasks = new Set();
   const result = {projectId, conversationId, startedAt:new Date().toISOString(),
-    delivery:'bounded native CDP capture; result delivered after window ends',
+    delivery:options.relay?'native CDP relay during bounded capture; result exported after window':'bounded native CDP capture; result delivered after window ends',
     requests:[], frames:[], incrementalChunks:0, droppedFrames:0, errors:[], ignoredTypes:{}};
 
   // Incremental UTF-8 decoding implemented here because the script sandbox has no
@@ -113,7 +113,23 @@ async (page) => {
   try{
     await session.send('Network.enable',{maxPostDataSize:10000});
     await page.reload({waitUntil:'domcontentloaded',timeout:20000});
-    await page.waitForTimeout(45000);
+    let published=0;
+    const duration=Math.min(500000,Math.max(1000,options.durationMs??45000));
+    const deadline=Date.now()+duration;
+    if(options.onAttached)await options.onAttached(page);
+    while(Date.now()<deadline){
+      await page.waitForTimeout(1000);
+      if(options.relay){
+        while(published<result.frames.length){
+          const frames=result.frames.slice(published,published+128);
+          const response=await page.request.post('http://127.0.0.1:4318/api/native',{
+            data:{projectId,conversationId,frames},timeout:5000});
+          if(response.status()!==200)throw new Error('Scoped native relay rejected capture');
+          published+=frames.length;
+        }
+      }
+    }
+    result.relayedFrames=published;
   }finally{
     session.removeAllListeners();await Promise.allSettled([...tasks]);await session.detach();
   }

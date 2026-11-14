@@ -12,8 +12,8 @@ async function run(chunks,{buffered='',wrongConversation=false,finished=false}={
  session.detach=async()=>{detached=true;};
  const page={url:()=>`https://factory.8090.ai/project/${project}/agents/${conversation}`,context:()=>({newCDPSession:async()=>session}),
   reload:async()=>{session.emit('Network.requestWillBeSent',{requestId:'r',request:{url:`https://api.factory.8090.dev/v2/project/${project}/agents/chat-agent/stream`,method:'POST',postData:JSON.stringify({conversation_id:wrongConversation?'other':conversation})}});session.emit('Network.responseReceived',{requestId:'r',response:{status:200,mimeType:'text/event-stream'}});await Promise.resolve();},
-  waitForTimeout:async()=>{for(const c of chunks)session.emit('Network.dataReceived',{requestId:'r',data:Buffer.from(c).toString('base64')});if(finished)session.emit('Network.loadingFinished',{requestId:'r'});}};
- const result=await capture(page);assert.equal(detached,true);assert.equal(session.eventNames().length,0);return result;
+  waitForTimeout:async()=>{await new Promise(r=>setTimeout(r,1000));for(const c of chunks)session.emit('Network.dataReceived',{requestId:'r',data:Buffer.from(c).toString('base64')});if(finished)session.emit('Network.loadingFinished',{requestId:'r'});}};
+ const result=await capture(page,{durationMs:1000});assert.equal(detached,true);assert.equal(session.eventNames().length,0);return result;
 }
 const frame=e=>`id: event-id\r\ndata: ${JSON.stringify(e)}\r\n\r\n`;
 const content={type:'content',turn_id:'t',message_id:'m',part_id:'p',content_offset:0,delta:'Hello 👩🏽‍💻 — café'};

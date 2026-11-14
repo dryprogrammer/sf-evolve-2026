@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
 import { CommandCapture } from './capture.mjs';
 import { ModelSnapshotCapture } from './model-snapshots.mjs';
+import { NativeRelay } from './native-relay.mjs';
 
 const dir = dirname(fileURLToPath(import.meta.url));
 export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/commands',interval=250,
@@ -27,11 +28,12 @@ export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/comm
     }
     return item;
   };
+  const nativeRelay=new NativeRelay({emit});
   const capture = new CommandCapture({root,emit,agentMap,commandAgentMap,includeHistory});
   const modelCapture=new ModelSnapshotCapture({file:modelSnapshotFile??join(dataDir,'model-snapshots.json'),emit});
   const metrics = () => ({runId,mode:'workspace-exec + imported conversation snapshots',uptimeMs:Date.now()-began,
     eventCount:seq,retainedEvents:events.length,clients:clients.size,writeErrors,
-    cpu:process.cpuUsage(initialCpu),rssBytes:process.memoryUsage().rss,
+    nativeCapture:{...nativeRelay.metrics},cpu:process.cpuUsage(initialCpu),rssBytes:process.memoryUsage().rss,
     modelSnapshots:{...modelCapture.metrics,delivery:'agent-assisted snapshot import; not live tokens'},
     capture:{...capture.metrics,averageScanMs:capture.metrics.scanMs/Math.max(capture.metrics.scans,1)},
     capabilities:{execLifecycle:'verified locally',execOutput:'verified locally',
@@ -39,7 +41,23 @@ export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/comm
       agentState:'unavailable',agentTurnCompletion:'unavailable in this fallback',steering:'disabled; unverified'}});
   const server=http.createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
-    // Read-only service: no arbitrary shell, remote fetch, write API or steering endpoint.
+    // No shell, remote fetch, arbitrary file write or steering API. Capture-only ingress
+    // is opt-in via a trusted local scope file; never expose this prototype publicly.
+    if(url.pathname==='/api/native'&&req.method==='POST'){
+      const allowedHosts=new Set([`127.0.0.1:${server.address().port}`,`localhost:${server.address().port}`]);
+      if(!allowedHosts.has(req.headers.host)||req.headers.origin||!String(req.headers['content-type']).startsWith('application/json')){
+        res.writeHead(403);res.end('Trusted local JSON collector only');req.resume();return;
+      }
+      try{
+        const scope=JSON.parse(await readFile(join(dataDir,'native-scope.json'),'utf8'));
+        let size=0;const chunks=[];
+        await new Promise((resolve,reject)=>{req.on('data',chunk=>{size+=chunk.length;if(size<=131072)chunks.push(chunk);});req.on('end',resolve);req.on('error',reject);req.setTimeout(5000,()=>req.destroy());});
+        if(size>131072){res.writeHead(413);res.end('Capture batch too large');return;}
+        const result=nativeRelay.accept(JSON.parse(Buffer.concat(chunks).toString('utf8')),scope);
+        res.writeHead(200,{'Content-Type':'application/json'});res.end(JSON.stringify(result));
+      }catch{res.writeHead(400);res.end('Native capture disabled, out of scope, or invalid');}
+      return;
+    }
     if(req.method!=='GET'){res.writeHead(405);res.end('Read-only inspector');return;}
     res.setHeader('X-Content-Type-Options','nosniff');
     if(url.pathname==='/events') {
@@ -53,6 +71,7 @@ export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/comm
       for(const e of events) if(e.id>cursor)res.write(`id: ${runId}:${e.id}\ndata: ${JSON.stringify(e)}\n\n`);
       clients.add(res); req.on('close',()=>clients.delete(res)); return;
     }
+    if(url.pathname==='/api/native'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(nativeRelay.snapshots()));return;}
     if(url.pathname==='/api/events'||url.pathname==='/api/metrics'){
       res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});
       res.end(JSON.stringify(url.pathname==='/api/events'?events:metrics()));return;
@@ -76,7 +95,7 @@ export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/comm
       await capture.scan();await modelCapture.scan();}finally{scanning=false;}},interval);
   const heartbeat=setInterval(()=>{for(const res of clients)res.write(': heartbeat\n\n');},5000);
   await new Promise(resolve=>server.listen(port,host,resolve));
-  return {server,capture,events,emit,metrics,runId,url:`http://${host}:${server.address().port}`,
+  return {server,capture,nativeRelay,events,emit,metrics,runId,url:`http://${host}:${server.address().port}`,
     async close(){clearInterval(timer);clearInterval(heartbeat);for(const res of clients)res.end();
       await new Promise(resolve=>server.close(resolve));await persistence;}};
 }
