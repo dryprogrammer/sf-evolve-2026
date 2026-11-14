@@ -1,0 +1,25 @@
+{
+  "parentConversation": "85d25add-67b5-44bc-8d9f-2a6414c0a5ee",
+  "subagentConversation": "a538b4eb-cf24-5ff4-a694-7f8973b4d0b0",
+  "overlapSeconds": 7.278159,
+  "commands": [
+    {
+      "command_id": "253a65d4-60bb-4d7e-b35b-3fc7a0bf02da",
+      "generation_id": "3af5b61f-d8cc-48d9-9e27-0dbf963b604d",
+      "summary": "Run sustained parent workload for genuine two-agent overlap",
+      "status": "exited",
+      "exit_code": 0,
+      "started_at": "2026-11-14T10:15:26.734394+00:00",
+      "ended_at": "2026-11-14T10:16:57.839117+00:00"
+    },
+    {
+      "command_id": "0527f99e-9b6f-42a6-9bdf-29f51b0c30a5",
+      "generation_id": "3af5b61f-d8cc-48d9-9e27-0dbf963b604d",
+      "summary": "Measure actual overlapping second agent execution",
+      "status": "exited",
+      "exit_code": 0,
+      "started_at": "2026-11-14T10:16:04.805181+00:00",
+      "ended_at": "2026-11-14T10:16:12.083340+00:00"
+    }
+  ]
+}
