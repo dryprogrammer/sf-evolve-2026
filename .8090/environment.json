@@ -1,0 +1,9 @@
+{
+  "name": "Phase 1 supervision feasibility",
+  "terminals": [
+    {
+      "name": "phase1-inspector",
+      "command": "node phase1/server.mjs"
+    }
+  ]
+}
