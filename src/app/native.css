@@ -80,3 +80,28 @@ main.native-main { max-width:1500px; width:100%; padding:28px 32px; min-width:0;
 @media(max-width:1100px) { main.native-main { padding:24px; } .native-detail-grid { grid-template-columns:minmax(0,1fr) 260px; gap:16px; } .native-project { display:none; } .native-detail-heading { align-items:start; flex-direction:column; } }
 @media(max-width:850px) { .native-app .factory-layout { grid-template-columns:160px minmax(0,1fr); } .native-sidebar { padding:20px 8px; } .native-sidebar button { font-size:11px; padding:8px; flex-wrap:wrap; } .native-sidebar button small { font-size:8px; } .native-detail-grid { grid-template-columns:minmax(0,1fr); } .native-list-heading,.native-record-row { grid-template-columns:minmax(0,1fr) 100px; } .native-list-heading>span:last-child { display:none; } .native-record-row>span:last-child { grid-column:1/-1; } .native-persona label { display:none; } .native-header { padding:0 16px; gap:12px; } .native-header-actions { gap:8px; } .native-persona select { width:155px; } }
 @media(max-width:600px) { .native-header { height:auto; min-height:64px; flex-wrap:wrap; padding:12px 14px; } .native-brand { font-size:14px; } .native-header-actions { width:100%; margin:0; justify-content:space-between; } .native-persona { min-width:0; } .native-persona select { width:150px; } .native-app .factory-layout { display:block; } .native-sidebar { padding:12px 14px; border-right:0; border-bottom:1px solid #e8e9ec; } .native-sidebar>nav { display:flex; flex-wrap:wrap; gap:4px; } .native-sidebar button { width:auto; min-height:36px; padding:6px 8px; } .native-sidebar button small,.native-sidebar-note,.native-sidebar>.native-nav-label { display:none; } .native-secondary { margin:8px 0 0; padding:8px 0 0; display:flex; flex-wrap:wrap; gap:6px; align-items:center; } .native-secondary .native-nav-label { margin:0; padding:0; } .native-secondary nav { display:flex; flex-wrap:wrap; } main.native-main { padding:20px 14px; } .native-list-heading,.native-record-row { padding:10px; gap:10px; } .native-record-row>span:first-child { flex-direction:column; align-items:start; gap:4px; } .native-detail-heading,.native-context,.native-properties { padding:16px; } .native-section-heading { flex-wrap:wrap; margin-bottom:8px; } .native-app .native-inspector { inset:8px; width:calc(100vw - 16px); height:calc(100dvh - 16px); } .native-inspector .inspector-titlebar { padding:0 14px; } .native-inspector .inspector-scroll { scrollbar-gutter:auto; } .native-inspector .work-inspector-content { padding:0 14px; } .native-inspector .panel { padding:14px; } }
+/* Scripted perspectives are supporting context, not a competing dashboard. */
+.native-confirmed { display:block; color:#858078; font-size:9px; margin-bottom:10px; }
+.native-perspectives .perspective-voices { --pv-ink:#353b47; --pv-muted:#777c86; background:#fafafb; border-color:#e8e9ec; border-radius:6px; box-shadow:none; padding:20px; }
+.native-perspectives .perspective-voices h2 { font-size:16px; }
+.native-perspectives .perspective-voices .pv-eyebrow { color:#858994; font-size:9px; font-weight:600; }
+.native-perspectives .perspective-voices .pv-scenario { font-size:11px; }
+.native-perspectives .perspective-voices .pv-scenario strong { color:#515763; }
+.native-perspectives .perspective-voices .pv-badge { border-color:#e2e4e8; border-radius:4px; font-size:10px; padding:3px 8px; }
+.native-perspectives .perspective-voices .pv-disclaimer { font-size:11px; padding:8px 10px; margin:14px 0; border-color:#dfe1e6; background:#f3f4f6; }
+.native-perspectives .perspective-voices .pv-card { --pv-accent:#697588; background:#fff; border-color:#e2e4e8; border-radius:5px; padding:14px; }
+.native-perspectives .perspective-voices .pv-selected { border-color:#9aa4b5; box-shadow:none; }
+.native-perspectives .perspective-voices .pv-avatar { width:32px; height:32px; font-size:20px; border:1px solid #e2e4e8; border-radius:5px; background:#f7f8fa; transform:none; }
+.native-perspectives .perspective-voices h3 { font-size:12px; }
+.native-perspectives .perspective-voices h3 span { font-size:10px; }
+.native-perspectives .perspective-voices .pv-tone { font-size:9px; }
+.native-perspectives .perspective-voices .pv-script-label { font-size:8px; margin:12px 0 6px; }
+.native-perspectives .perspective-voices blockquote { font-size:11px; margin-bottom:12px; }
+.native-perspectives .perspective-voices button { background:#fff; border-color:#dfe1e6; color:#515763; border-radius:4px; padding:6px 9px; font-size:11px; min-height:34px; margin:0; }
+.native-perspectives .perspective-voices button:hover:not(:disabled) { background:#f3f4f6; }
+.native-perspectives .perspective-voices button:disabled { background:#f5f6f8; color:#858994; border-color:#e2e4e8; }
+.native-perspectives .perspective-voices button:focus-visible,.native-perspectives .perspective-voices a:focus-visible { outline:3px solid #9c732c; }
+.native-perspectives .perspective-voices .pv-footer { margin-top:14px; gap:10px; }
+.native-perspectives .perspective-voices .pv-evidence { color:#515f76; font-size:11px; }
+.native-perspectives .perspective-voices .pv-status { font-size:10px; }
+@media(max-width:600px) { .native-header-actions { flex-wrap:wrap; } }
