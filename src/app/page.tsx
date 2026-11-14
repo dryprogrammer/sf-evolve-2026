@@ -1,0 +1,41 @@
+'use client';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { FactoryView } from '@/lib/contracts';
+import WorkInspector from '@/components/WorkInspector';
+import FactoryScene, { type NavigationRequest } from '@/components/factory/FactoryScene';
+import { STATIONS, type StationId } from '@/components/factory/world';
+import './factory.css';
+function PixelMark({small=false}:{small?:boolean}){return <span className={`pixel-mark ${small?'small':''}`} aria-hidden="true"><i/><i/><i/><i/><i/><i/><i/><i/><i/></span>;}
+export default function FactoryApp(){
+ const [view,setView]=useState<FactoryView|null>(null),[blocked,setBlocked]=useState(false),[open,setOpen]=useState(false);
+ const [selected,setSelected]=useState<StationId>('assembly'),[nearby,setNearby]=useState<StationId|null>(null),[request,setRequest]=useState<NavigationRequest|null>(null),[personaRequest,setPersonaRequest]=useState<{id:string}|null>(null);
+ const dialog=useRef<HTMLDialogElement>(null);
+ const station=STATIONS.find(s=>s.id===selected)!;
+ const inspect=useCallback((id:StationId)=>{setSelected(id);setOpen(true);},[]);
+ useEffect(()=>{const el=dialog.current;if(open&&!el?.open)el?.showModal();if(!open&&el?.open)el.close();},[open]);
+ const walk=(id:StationId)=>{setSelected(id);setRequest({id,nonce:Date.now()});};
+ const latest=view?.rounds.at(-1),hasAccess=!!view&&view.work.evidence.every(e=>e.permitted);
+ const pending=hasAccess?(latest?.assignments.filter(a=>a.responsibility==='required'&&latest.signoffs.filter(s=>s.assignmentId===a.id&&s.generation===a.generation).at(-1)?.outcome!=='approve').length??0):null;
+ return <div className="factory-app">
+  <header className="factory-header"><a className="factory-brand" href="#floor"><PixelMark/><span>The Factory<span className="brand-meta">HUMAN + AGENT WORKSPACE</span></span></a><div className="header-links"><span className="space-label"><span className="status-dot"/>Workshop 01</span><span className="demo-chip">Fixture demonstration</span><button className="inspector-trigger" onClick={()=>setOpen(true)}>Work inspector <span aria-hidden="true">↗</span></button></div></header>
+  <div className="factory-layout">
+   <aside className="factory-sidebar"><div className="sidebar-heading"><span className="sidebar-icon" aria-hidden="true">▦</span><span>Your workspace</span></div><button className="floor-nav current" onClick={()=>{setOpen(false);document.getElementById('floor')?.focus();}}><span aria-hidden="true">⌂</span> Factory floor <span className="nav-dot"/></button><p className="nav-section">WORKCELLS <span>05</span></p><nav aria-label="Workstation navigation">{STATIONS.map(s=><button key={s.id} className={`station-nav ${selected===s.id?'selected':''}`} onClick={()=>walk(s.id)} aria-label={`Walk to ${s.title}`} aria-pressed={selected===s.id}><span className="station-number" style={{borderColor:s.color}}>{s.code}</span><span>{s.title}</span><span className="station-arrow" aria-hidden="true">↗</span></button>)}</nav><div className="sidebar-note"><PixelMark small/><p>Different perspectives.<br/><strong>One shared floor.</strong></p><span>Human voices are not interchangeable votes.</span></div><div className="sidebar-bottom"><span className="ambient-indicator"/><span>Presence is simulated<br/><small>No live agent stream</small></span></div></aside>
+   <main className="factory-main" id="floor" tabIndex={-1}>
+    <div className="floor-heading"><div><p className="floor-eyebrow">A PLACE TO BUILD, TOGETHER</p><h1>Good work starts<br className="mobile-break"/> on the floor.</h1><p className="floor-intro">Walk over. Take a look. Bring your perspective.</p></div><div className="walking-persona"><span className="avatar-chip" aria-hidden="true">{view?.principal.kind==='agent'?'▣':(view?.principal.name[0]??'M')}</span><div><label htmlFor="walking-as">Walking as</label><select id="walking-as" value={view?.principal.id??'maya'} disabled={!view||blocked} onChange={e=>setPersonaRequest({id:e.target.value})}>{(view?.principals??[{id:'maya',name:'Loading fixture…'}]).map(p=><option key={p.id} value={p.id}>{p.name.split(' · ')[0]}{p.id==='observer'?' · agent':''}</option>)}</select></div></div></div>
+    <section className="factory-viewport" aria-label="Factory floor"><div className="viewport-toolbar"><span className="view-title"><span aria-hidden="true">▦</span> THE WORKSHOP <b>/</b> FLOOR 01</span><div><span className="viewport-demo">Demo space</span><span className="view-scale">2D SPRITE WORLD</span></div></div><FactoryScene view={view} request={request} onNearby={setNearby} onInspect={inspect} paused={open}/></section>
+    <div className="floor-below"><section className="station-brief" style={{'--station-accent':station.color} as React.CSSProperties}><div className="brief-number">{station.code}</div><div className="brief-copy"><p className="brief-eyebrow">{nearby===station.id?'YOU’RE HERE':'SELECTED WORKCELL'}</p><h2>{station.title}</h2><p>{station.description}</p></div><div className="brief-actions"><button className="walk-button" onClick={()=>walk(station.id)}>Walk here <span aria-hidden="true">→</span></button><button className="brief-inspect" onClick={()=>inspect(station.id)}>Inspect {station.title}</button></div></section><section className="work-summary" aria-label="Persisted fixture work"><div className="summary-heading"><span className="status-dot"/><span>PERSISTED FIXTURE WORK</span><span className="summary-id">DEMO-1</span></div><h2>{hasAccess?view?.work.title:'Shared work context'}</h2><div className="summary-tags"><span>{hasAccess?(latest?.state.replaceAll('_',' ')??'No review yet'):'Access not verified'}</span><span>{pending!==null?`${pending} pending sign-off${pending===1?'':'s'}`:'Evidence restricted'}</span></div><button onClick={()=>setOpen(true)}>Open shared context <span aria-hidden="true">↗</span></button></section></div>
+    <div className="floor-footer"><div className="floor-legend"><span><i className="legend-human"/> Human</span><span><i className="legend-agent"/> Agent</span><span><i className="legend-you"/> You</span></div><p>Presence & movement are simulated. Review state is persisted. <strong>No live 8090 data or inference.</strong></p></div>
+   </main>
+  </div>
+  <dialog ref={dialog} className="factory-inspector" aria-label={`${station.title} work inspector`} onKeyDown={event=>{
+   if(event.key!=='Tab')return;
+   // Native modality makes the background inert; explicitly wrap Tab so
+   // Chromium does not focus the document body at either end of the dialog.
+   const controls=Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button, a[href], input, select, textarea, summary, [tabindex]')).filter(el=>el.tabIndex>=0&&!el.matches(':disabled')&&el.getClientRects().length>0);
+   const first=controls[0],last=controls.at(-1),active=document.activeElement;
+   if(!first){event.preventDefault();event.currentTarget.focus();return;}
+   if(event.shiftKey&&(active===first||!event.currentTarget.contains(active))){event.preventDefault();last?.focus();}
+   else if(!event.shiftKey&&(active===last||!event.currentTarget.contains(active))){event.preventDefault();first.focus();}
+  }} onCancel={()=>setOpen(false)} onClose={()=>setOpen(false)} onClick={e=>{if(e.target===e.currentTarget){const r=e.currentTarget.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)setOpen(false);}}}><div className="inspector-titlebar"><div><span className="inspector-location" style={{background:station.color}}>{station.code}</span><span>{station.title}<small> / WORK INSPECTOR</small></span></div><button aria-label="Close work inspector" onClick={()=>setOpen(false)}>×</button></div><div className="inspector-scroll"><WorkInspector onViewChange={setView} onBlockedChange={setBlocked} personaRequest={personaRequest}/></div></dialog>
+ </div>;
+}

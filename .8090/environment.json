@@ -1,0 +1,5 @@
+{
+  "name": "Human-led factory pilot",
+  "install": "npm ci",
+  "terminals": [{ "name": "factory-pilot", "command": "npm run dev:fixture -- --port 3000" }]
+}
