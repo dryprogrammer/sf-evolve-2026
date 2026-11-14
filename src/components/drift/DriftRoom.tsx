@@ -56,7 +56,7 @@ export default function DriftRoom() {
  const cited = new Set(finding?.citations.map(citation => citation.sourceId) ?? []);
  function select(review: DriftReview, finding?: DriftFinding) {
   setRole(review.role); setFindingId(finding?.id ?? review.findings[0]?.id ?? null); setRationale('');
-  requestAnimationFrame(() => inspector.current?.focus({ preventScroll: true }));
+  requestAnimationFrame(() => inspector.current?.focus());
  }
  function openSource(item: DriftSource, trigger: HTMLElement) { sourceTrigger.current = trigger; setSource(item); }
  function closeSource() { setSource(null); requestAnimationFrame(() => sourceTrigger.current?.focus()); }
@@ -76,7 +76,7 @@ export default function DriftRoom() {
        const stationReview = snapshot.reviews.find(item => item.role === station.role);
        const conflicts = stationReview?.findings.filter(item => item.kind === 'conflict').length ?? 0;
        return <button key={station.role} className={`${styles.station} ${role === station.role ? styles.active : ''}`} aria-pressed={role === station.role} disabled={!stationReview} onClick={() => stationReview && select(stationReview)}>
-        <span className={styles.stationTop}><span>{station.number} / REVIEW STATION</span><span>{stationReview ? `${stationReview.findings.length} findings` : 'Unavailable'}</span></span><PixelPerson role={station.role}/><strong>{station.title}</strong><span className={styles.question}>{station.question}</span><span className={styles.reviewer}>{stationReview?.name ?? 'No recorded reviewer'}</span>{conflicts > 0 && <span className={styles.conflictCount}>{conflicts} conflict{conflicts === 1 ? '' : 's'}</span>}
+        <span className={styles.stationTop}><span>{station.number} / REVIEW STATION</span><span>{stationReview ? `${stationReview.findings.length} finding${stationReview.findings.length === 1 ? '' : 's'}` : 'Unavailable'}</span></span><PixelPerson role={station.role}/><strong>{station.title}</strong><span className={styles.question}>{station.question}</span><span className={styles.reviewer}>{stationReview?.name ?? 'No recorded reviewer'}</span>{conflicts > 0 && <span className={styles.conflictCount}>{conflicts} conflict{conflicts === 1 ? '' : 's'}</span>}
        </button>;
       })}</nav>
       <section className={styles.evidenceMap} aria-label="Evidence map"><div className={styles.sectionTitle}><h2>Shared evidence table</h2><span>{snapshot.sources.length} SOURCES</span></div><p className={styles.mapNote}>Highlighted sources are cited by the selected finding. Open a source to inspect the full collected content.</p><div className={styles.mapCore}><span aria-hidden="true">▦</span><strong>{finding ? `${finding.citations.length} citations on the table` : 'No finding selected'}</strong><small>{finding?.kind === 'conflict' ? 'CONFLICT · INSPECT BOTH SIDES' : 'ONE PRESERVED SNAPSHOT · NO LIVE FEED'}</small></div><div className={styles.sourceGrid}>{snapshot.sources.map(item => <button className={`${styles.sourceNode} ${cited.has(item.id) ? styles.cited : ''}`} key={item.id} onClick={event => openSource(item, event.currentTarget)}><span className={styles.sourceType}>{item.type} {cited.has(item.id) ? '· CITED' : ''}</span><strong>{item.title}</strong><span>{item.access} · {item.completeness}</span><span className={styles.sourceOpen}>Inspect source ↗</span></button>)}</div>{snapshot.sources.length === 0 && <p>No sources collected. Coverage unknown.</p>}</section>
