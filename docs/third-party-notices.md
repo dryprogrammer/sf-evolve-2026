@@ -1,6 +1,6 @@
 # Dependency and prior-work disclosure
 
-This is a package-lock metadata inventory, not a legal audit or declaration of event eligibility. Before public release, the owner must approve the project license and review third-party obligations. The repository has no root LICENSE at this handoff; MIT publication has not been performed.
+This is a package-lock metadata inventory, not a legal audit or declaration of event eligibility. The owner approved MIT licensing for original project code; the root LICENSE now records copyright 2026 dryprogrammer. Third-party obligations still need review before publication. Repository visibility remains private pending audit; licensing is not public release.
 
 ## Code and assets
 
@@ -10,7 +10,7 @@ This is a package-lock metadata inventory, not a legal audit or declaration of e
 - Pixel rendering is repository code; avatars use Unicode emoji rendered by the browser/system. No downloaded stock avatar or voice assets were added. Optional voice uses the browser speech API; no ElevenLabs integration is claimed. Check the browser/OS voice availability and terms before recording audio.
 - No sponsor-provider credentials, live 8090 integration, third-party customer records, external messaging or hardware control are used.
 
-## Locked non-optional production package metadata
+## Locked package metadata (entries not marked dev or optional)
 
 | Package | Version | Declared license |
 |---|---|---|
@@ -35,3 +35,7 @@ This is a package-lock metadata inventory, not a legal audit or declaration of e
 | `tslib` | 2.9.1 | 0BSD |
 
 Optional platform packages, development tools and transitive notices must also be reviewed before publication; this table is not a complete notice-text bundle. Retain required upstream copyright and license texts.
+
+## Publication boundary
+
+Changing the existing repository to public also exposes its other branches and pull requests. The separate PR #1 branch contains native conversation/transport captures. Those are not part of the fixture demo and must be cleared or excluded through a separately approved clean public submission export; deleting them from one branch would not erase Git/PR history. No visibility change or public submission has been performed.

@@ -1,6 +1,6 @@
 # Bounded delivery tracker
 
-Conservative schedule: deadline approximately 19:52 UTC on Nov 14 from the prior correction; latest feature freeze 19:32 UTC. Optional scope frozen early at approximately 18:43 UTC. Weekly phase dates are not the delivery schedule.
+Updated Nov14 owner schedule: noon Pacific target; 3 PM Pacific hard feature freeze. Official rules checked: 3:15 PM PT submission / 3:30 PM PT organizer code freeze. The earlier 11:52 AM conservative planning cutoff is superseded. The fixture demo remains a verified fallback; optional scope froze early at approximately 18:43 UTC. Weekly phase dates are not the schedule. External API/MCP follow-on still requires explicit launch authorization and capability verification.
 
 | Owner | Input revision / dependency | Owned output | Acceptance / state |
 |---|---|---|---|

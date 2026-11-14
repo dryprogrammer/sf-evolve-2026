@@ -31,12 +31,18 @@ Captured typecheck, unit/service, production build and real-backend browser resu
 
 - [ ] Use the captured verification revision and final PR hash and run the [demo preflight](demo-script.md#preflight--before-recording).
 - [ ] Human reviews every claim against the recorded build; remove unsupported story/UI claims.
-- [ ] Human reviews MIT/license expectations, dependency and asset licenses, and permission to publish. No LICENSE is created here; no license compliance or eligibility is asserted.
+- [ ] MIT licensing for original code is approved and root LICENSE is present. Review dependency/asset obligations and publication audit separately; compliance and event eligibility are not automatically established.
 - [ ] Human reviews prior work disclosure: PR2 foundation, pre-existing persistence/review engine, and exactly what changed for this event. Verify dates/rules; do not claim everything was built during the hackathon.
 - [ ] Human reviews tool/AI disclosures: coding assistance used for this documentation pack; Next.js/React/TypeScript/PGlite; list actual development tools and any browser voice/captions used. Do not invent external model/provider usage.
 - [ ] Human attaches the ≤5-minute video, verifies playback/captions, and checks repository/video/demo URL access from the intended reviewer context. Keep fixture access restricted unless explicitly approved; persona switching is not authentication.
 - [ ] Human verifies destination, rules, deadline, and required fields. Historical handoff points to `https://evolve-8090.devpost.com/`; this is not freshly verified.
-- [ ] Work to the conservative handoff schedule on **November 14, 2026: freeze 19:32 UTC; due approximately 19:52 UTC**. These are operative planning cutoffs, not newly verified official deadlines. **No refreshed 90-minute allowance.** If a cutoff has passed, escalate to the parent/human rather than assuming an extension.
-- [ ] **A human must explicitly approve any public publish or submit.** Then the human attaches the video, fills reviewed URLs/disclosures, and performs the actual portal submission. Save its receipt only if one is actually returned.
+- [ ] Updated owner timing on **November 14, 2026: noon Pacific target; 3 PM Pacific hard feature freeze**. Official rules checked state **3:15 PM PT submission / 3:30 PM PT organizer code freeze**. Use the earlier owner freeze and preserve final verification/submission time; the previous 11:52 AM approximate cutoff is superseded.
+- [ ] **Do not change current repository visibility before clearing PR #1's captured evidence or approving a clean submission export.** Public submission remains separately gated. The human attaches the video, fills reviewed URLs/disclosures, and performs the actual portal submission. Save its receipt only if one is actually returned.
 
 **Exact handoff action:** The integrated build and its test evidence are supplied in the PR; verify the submission uses that revision. Human records the script, attaches the video, checks access, reviews rules/license/prior-work/tool disclosures, and approves public release before personally pressing the portal's publish/submit control. Destination validity, official eligibility, license status, public URL, video, and submission receipt remain unknown until checked.
+
+## Verified event rules and current blocker
+
+[Official rules](https://evolve-8090.devpost.com/rules) require a public source repository under MIT with accurate copyright notices, and README disclosure of libraries/APIs/AI/sponsor tools and pre-event work. A short demo video is required for sponsor prizes and used for tie-breaking; no exact video length was stated in the rules inspected. Submission is by 3:15 PM PT Nov14; organizer code freeze is 3:30 PM PT. The owner's 3 PM freeze is earlier and remains operative.
+
+MIT LICENSE is committed. Public visibility is not yet changed: PR #1 contains separate native conversation/transport captures, so publishing this whole repository would expose more than the demo. Recommended smallest safe action: approve a clean public submission repository/export from the reviewed demo revision, excluding the separate captures, while keeping the development repository private. No history deletion or automatic merge is needed.

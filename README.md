@@ -113,3 +113,25 @@ This delivery extends the reviewed WO-3–6 foundation; it **does not complete t
 - Add live-source integration tests, revoke/access-denial tests against real authorization, operational load checks and deployment review.
 
 Real spatial multiplayer, notification/calling APIs, model/skill experiments, Gas City orchestration, and live observation/steering remain later modules. This application does not expose hosted-agent private reasoning or rely on undocumented endpoints.
+
+## License and required event disclosures
+
+Original project code is licensed under the [MIT License](LICENSE), copyright 2026 dryprogrammer, approved by the project owner. Third-party libraries and assets retain their own licenses and notices; MIT does not relicense them.
+
+| Library / tool | License or usage boundary |
+|---|---|
+| Next.js, React, React DOM | MIT |
+| PGlite | Apache-2.0 |
+| TypeScript | Apache-2.0 |
+| Playwright | Apache-2.0 |
+| Vitest | MIT |
+| Software Factory AI coding assistance and bounded workers | Hosted development service; not independent human reviewers or a delivered runtime orchestration system |
+| Browser speech synthesis | Browser/OS-provided optional speech; no ElevenLabs integration or distributed voice assets |
+
+See [dependency metadata and prior-work disclosures](docs/third-party-notices.md) for further transitive licenses and limitations. No external Factory API, app-side MCP integration, sponsor-provider API, customer contact or hardware integration is delivered in this fixture revision.
+
+**Prior work:** the delivery reused PR #2's persistence, human-review and sprite-factory foundation at `480210bef24563e19793d48cde30f993182acca3`. This follow-on added attention/actions, source links and the evidence chain, the real bounded renewal acceptance example, scripted caption/browser-voice perspectives, focused verification and submission materials. This is not a claim that all repository history was created during the event; eligibility and date restrictions must be checked against event rules.
+
+**Publication:** source-code licensing is not deployment or submission. The development repository remains private pending a whole-repository publication audit: PR #1 contains separate captured conversation/transport evidence. A clean public submission export can preserve the original development repository without exposing unrelated captures.
+
+**Updated timing (Nov 14, 2026):** noon Pacific is the target; 3 PM Pacific is the owner's hard feature freeze. [Official rules](https://evolve-8090.devpost.com/rules) state submission by 3:15 PM PT and organizer code freeze at 3:30 PM PT. Keep the earlier owner freeze and reserve final verification/evidence/submission time. These replace the earlier approximate 11:52 AM planning cutoff. A short demo video is required for sponsor prizes; the rules checked do not specify a video length. The five-minute script is a presentation target, not a newly asserted portal rule.
