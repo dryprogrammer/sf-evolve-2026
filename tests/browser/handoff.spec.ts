@@ -15,6 +15,8 @@ async function action(page: Page, name: string, operation: string, code?: string
   if (code) {
     expect((await response.json()).error.code).toBe(code);
     await expect(page.getByRole('alert').filter({ hasText: code })).toBeVisible();
+    // Visible means on screen, not merely present above the scrolled review form.
+    await expect(page.getByRole('alert').filter({ hasText: code })).toBeInViewport();
   } else await expect(page.getByRole('button', { name, exact: true })).not.toBeDisabled();
 }
 async function cancel(page: Page) {

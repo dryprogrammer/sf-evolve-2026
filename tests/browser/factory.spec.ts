@@ -4,7 +4,7 @@ async function position(page:Page){return scene(page).evaluate(c=>({x:c.getAttri
 async function ready(page:Page){await page.goto('/');await expect(page.getByLabel('Walking as')).toBeEnabled();await expect(scene(page)).toHaveAttribute('data-player-x',/\d/);}
 test('default sprite floor reaches all five stations and opens a contextual inspector',async({page})=>{
  test.setTimeout(60000);const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));await ready(page);
- await expect(page.getByRole('heading',{name:'Good work starts on the floor.'})).toBeVisible();await expect(page.getByRole('dialog')).toHaveCount(0);
+ await expect(page.getByRole('heading',{name:'Fast agents. Accountable humans.'})).toBeVisible();await expect(page.getByRole('dialog')).toHaveCount(0);
  for(const [name,id,x,y] of [['Assembly','assembly','496.0','336.0'],['Security','security','944.0','336.0'],['Maintainability','maintainability','208.0','528.0'],['Growth','growth','784.0','528.0'],['Economics','economics','1008.0','528.0']]){
   await page.getByRole('button',{name:`Walk to ${name}`,exact:true}).click();await expect(scene(page)).toHaveAttribute('data-player-x',x,{timeout:12000});await expect(scene(page)).toHaveAttribute('data-player-y',y);await expect(scene(page)).toHaveAttribute('data-nearby',id);
   await page.keyboard.press('e');await expect(page.getByRole('dialog',{name:`${name} work inspector`})).toBeVisible();await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);await expect(scene(page)).toBeFocused();
