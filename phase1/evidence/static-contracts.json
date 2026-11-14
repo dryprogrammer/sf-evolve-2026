@@ -1,0 +1,49 @@
+{
+  "checkedAt": "2026-11-14",
+  "source": "https://factory.8090.ai/assets/index-APN3xmhM.js",
+  "appVersion": "0.60.4",
+  "sha256": "d338403cb62ea29d6fcefa677e6de6c43ec6ae2e15169de6bbcc43e4c6660013",
+  "confidence": "Static shipped frontend only; authenticated behavior unverified",
+  "findings": [
+    {
+      "pattern": "/agents/${t}/stream",
+      "characterOffset": 8301361,
+      "snippet": "!0});try{const j=Date.now(),T={conversation_id:f,last_event_id:d,tail_user_messages:yzn},N=await n(`/agents/${t}/stream`,T,C.signal);y&&!C.signal.aborted&&(b.restartAfterReconnect(),y=!1);try{await o(N,j,A=>{d=A,s.current.onEventId(A)},()=>{p=!0,m=0},w,x,h,f,C.signal)}catch(A){if(u.aborted)return;i"
+    },
+    {
+      "pattern": "/agents/${t}/input",
+      "characterOffset": 8297559,
+      "snippet": "{callProjectApi:n}=ei();let s;e[0]!==t||e[1]!==n?(s=async(o,a)=>{try{return await hmo(()=>n(\"POST\",`/agents/${t}/input`,o,a),a)}catch(c){const u=c;throw u instanceof Ln?Azn(u):u}},e[0]=t,e[1]=n,e[2]=s):s=e[2];const r=s;let i;return e[3]!==r?(i={postAgentInputApi:r},e[3]=r,e[4]=i):i=e[4],i}function"
+    },
+    {
+      "pattern": "steer_message",
+      "characterOffset": 8241723,
+      "snippet": "Complete:!1}}function mzn(t){return t.type===\"subagent_started\"||t.type===\"user_message\"||t.type===\"steer_message\"||t.type===\"content\"||t.type===\"thinking\"||t.type===\"summarized_thinking\"||t.type===\"tool_call_partial\"||t.type===\"immediate_tool_call\"||t.type===\"blocking_tool_call\"||t.type===\"t"
+    },
+    {
+      "pattern": "observeConsumed",
+      "characterOffset": 8271021,
+      "snippet": "e removal receipt\");return M.queue&&R===o.getSnapshotVersion()&&o.observePendingSnapshot(M.queue),o.observeConsumed(T),C.current.delete(T),P}catch(M){if(J2e(M)){const P=M instanceof GR?M.queueState:void 0;return(P==null?void 0:P.conversation_id)===A&&R===o.getSnapshotVersion()&&o.observePending"
+    },
+    {
+      "pattern": "last_event_id",
+      "characterOffset": 8301310,
+      "snippet": "k=()=>C.abort();u.addEventListener(\"abort\",k,{once:!0});try{const j=Date.now(),T={conversation_id:f,last_event_id:d,tail_user_messages:yzn},N=await n(`/agents/${t}/stream`,T,C.signal);y&&!C.signal.aborted&&(b.restartAfterReconnect(),y=!1);try{await o(N,j,A=>{d=A,s.current.onEventId(A)},()=>{p"
+    },
+    {
+      "pattern": "blocking_tool_call",
+      "characterOffset": 8241884,
+      "snippet": "pe===\"summarized_thinking\"||t.type===\"tool_call_partial\"||t.type===\"immediate_tool_call\"||t.type===\"blocking_tool_call\"||t.type===\"tool_result\"||t.type===\"compacting_context\"||t.type===\"compaction_complete\"}function zB(t,e,n,s){const r=t.findIndex(f=>f.role===\"assistant\"&&f.id===e.message_id),i=r="
+    },
+    {
+      "pattern": "done",
+      "characterOffset": 11681,
+      "snippet": "a+cIe(s,c),o+=iz(s,e,n,i,r);else if(c=uas(t),typeof c==\"function\")for(t=c.call(t),c=0;!(s=t.next()).done;)s=s.value,i=a+cIe(s,c++),o+=iz(s,e,n,i,r);else if(i===\"object\"){if(typeof t.then==\"function\")return iz(has(t),e,n,s,r);throw e=String(t),Error(\"Objects are not valid as a React c"
+    },
+    {
+      "pattern": "/v2/awareness/stream",
+      "characterOffset": 1119091,
+      "snippet": "w new xMe(\"Not authenticated\");const{baseUrl:i,headers:o}=r,a=this.desiredTopics,c=await fetch(`${i}/v2/awareness/stream`,{method:\"POST\",headers:{...o,Accept:\"text/event-stream\"},body:JSON.stringify({topics:a}),signal:e,credentials:Qon(Pne.LongLivedStream)});if(c.status===404)throw new _kt(\"Awarenes"
+    }
+  ]
+}

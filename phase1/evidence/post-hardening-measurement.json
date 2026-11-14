@@ -1,0 +1,419 @@
+{
+  "measuredAt": "2026-11-14T10:19:39.055Z",
+  "since": "1970-01-01T00:00:00Z",
+  "scope": "Actual 8090 parent/subagent exec outputs in one shared workspace; not native platform SSE",
+  "timestamps": "Producer and capture clocks share this workspace. Output latency computed only for explicit producerAt markers.",
+  "distribution": {
+    "count": 40,
+    "minMs": 0,
+    "p50Ms": 209,
+    "p95Ms": 248,
+    "maxMs": 249
+  },
+  "counts": {
+    "parent-verification": 40,
+    "second-agent-audit": 0
+  },
+  "metrics": {
+    "runId": "6a12eba7-6b66-4419-b1b3-800a2624a0b1",
+    "mode": "workspace-exec fallback",
+    "uptimeMs": 61152,
+    "eventCount": 44,
+    "retainedEvents": 44,
+    "clients": 1,
+    "writeErrors": 0,
+    "cpu": {
+      "user": 794768,
+      "system": 496945
+    },
+    "rssBytes": 74919936,
+    "capture": {
+      "scans": 245,
+      "errors": 0,
+      "metadataErrors": 0,
+      "outputErrors": 0,
+      "rootErrors": 0,
+      "identityErrors": 0,
+      "bytes": 5945,
+      "scanMs": 1371.074833000028,
+      "maxScanMs": 11.709498999996867,
+      "averageScanMs": 5.59622380816338
+    },
+    "capabilities": {
+      "execLifecycle": "verified locally",
+      "execOutput": "verified locally",
+      "agentState": "unavailable",
+      "agentTurnCompletion": "unavailable in this fallback",
+      "steering": "disabled; unverified"
+    }
+  },
+  "lifecycle": {
+    "count": 3,
+    "minMs": 64,
+    "p50Ms": 177,
+    "p95Ms": 202,
+    "maxMs": 202
+  },
+  "samples": [
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 0,
+      "producerAt": "2026-11-14T10:18:49.960Z",
+      "capturedAt": "2026-11-14T10:18:50.172Z",
+      "latencyMs": 212,
+      "eventId": 3
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 1,
+      "producerAt": "2026-11-14T10:18:50.463Z",
+      "capturedAt": "2026-11-14T10:18:50.672Z",
+      "latencyMs": 209,
+      "eventId": 4
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 2,
+      "producerAt": "2026-11-14T10:18:50.966Z",
+      "capturedAt": "2026-11-14T10:18:51.175Z",
+      "latencyMs": 209,
+      "eventId": 5
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 3,
+      "producerAt": "2026-11-14T10:18:51.469Z",
+      "capturedAt": "2026-11-14T10:18:51.675Z",
+      "latencyMs": 206,
+      "eventId": 6
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 4,
+      "producerAt": "2026-11-14T10:18:51.972Z",
+      "capturedAt": "2026-11-14T10:18:52.175Z",
+      "latencyMs": 203,
+      "eventId": 7
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 5,
+      "producerAt": "2026-11-14T10:18:52.474Z",
+      "capturedAt": "2026-11-14T10:18:52.676Z",
+      "latencyMs": 202,
+      "eventId": 8
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 6,
+      "producerAt": "2026-11-14T10:18:52.976Z",
+      "capturedAt": "2026-11-14T10:18:53.178Z",
+      "latencyMs": 202,
+      "eventId": 9
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 7,
+      "producerAt": "2026-11-14T10:18:53.478Z",
+      "capturedAt": "2026-11-14T10:18:53.674Z",
+      "latencyMs": 196,
+      "eventId": 10
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 8,
+      "producerAt": "2026-11-14T10:18:53.980Z",
+      "capturedAt": "2026-11-14T10:18:54.175Z",
+      "latencyMs": 195,
+      "eventId": 11
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 9,
+      "producerAt": "2026-11-14T10:18:54.482Z",
+      "capturedAt": "2026-11-14T10:18:54.677Z",
+      "latencyMs": 195,
+      "eventId": 12
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 10,
+      "producerAt": "2026-11-14T10:18:54.986Z",
+      "capturedAt": "2026-11-14T10:18:55.178Z",
+      "latencyMs": 192,
+      "eventId": 13
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 11,
+      "producerAt": "2026-11-14T10:18:55.489Z",
+      "capturedAt": "2026-11-14T10:18:55.679Z",
+      "latencyMs": 190,
+      "eventId": 14
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 12,
+      "producerAt": "2026-11-14T10:18:55.991Z",
+      "capturedAt": "2026-11-14T10:18:56.178Z",
+      "latencyMs": 187,
+      "eventId": 15
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 13,
+      "producerAt": "2026-11-14T10:18:56.493Z",
+      "capturedAt": "2026-11-14T10:18:56.679Z",
+      "latencyMs": 186,
+      "eventId": 16
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 14,
+      "producerAt": "2026-11-14T10:18:56.997Z",
+      "capturedAt": "2026-11-14T10:18:57.178Z",
+      "latencyMs": 181,
+      "eventId": 17
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 15,
+      "producerAt": "2026-11-14T10:18:57.500Z",
+      "capturedAt": "2026-11-14T10:18:57.680Z",
+      "latencyMs": 180,
+      "eventId": 18
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 16,
+      "producerAt": "2026-11-14T10:18:58.004Z",
+      "capturedAt": "2026-11-14T10:18:58.182Z",
+      "latencyMs": 178,
+      "eventId": 19
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 17,
+      "producerAt": "2026-11-14T10:18:58.507Z",
+      "capturedAt": "2026-11-14T10:18:58.679Z",
+      "latencyMs": 172,
+      "eventId": 20
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 18,
+      "producerAt": "2026-11-14T10:18:59.011Z",
+      "capturedAt": "2026-11-14T10:18:59.179Z",
+      "latencyMs": 168,
+      "eventId": 21
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 19,
+      "producerAt": "2026-11-14T10:18:59.514Z",
+      "capturedAt": "2026-11-14T10:18:59.679Z",
+      "latencyMs": 165,
+      "eventId": 22
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 20,
+      "producerAt": "2026-11-14T10:19:04.186Z",
+      "capturedAt": "2026-11-14T10:19:04.186Z",
+      "latencyMs": 0,
+      "eventId": 23
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 21,
+      "producerAt": "2026-11-14T10:19:04.687Z",
+      "capturedAt": "2026-11-14T10:19:04.936Z",
+      "latencyMs": 249,
+      "eventId": 24
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 22,
+      "producerAt": "2026-11-14T10:19:05.190Z",
+      "capturedAt": "2026-11-14T10:19:05.439Z",
+      "latencyMs": 249,
+      "eventId": 25
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 23,
+      "producerAt": "2026-11-14T10:19:05.692Z",
+      "capturedAt": "2026-11-14T10:19:05.939Z",
+      "latencyMs": 247,
+      "eventId": 26
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 24,
+      "producerAt": "2026-11-14T10:19:06.194Z",
+      "capturedAt": "2026-11-14T10:19:06.442Z",
+      "latencyMs": 248,
+      "eventId": 27
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 25,
+      "producerAt": "2026-11-14T10:19:06.697Z",
+      "capturedAt": "2026-11-14T10:19:06.943Z",
+      "latencyMs": 246,
+      "eventId": 28
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 26,
+      "producerAt": "2026-11-14T10:19:07.200Z",
+      "capturedAt": "2026-11-14T10:19:07.448Z",
+      "latencyMs": 248,
+      "eventId": 29
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 27,
+      "producerAt": "2026-11-14T10:19:07.705Z",
+      "capturedAt": "2026-11-14T10:19:07.944Z",
+      "latencyMs": 239,
+      "eventId": 30
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 28,
+      "producerAt": "2026-11-14T10:19:08.209Z",
+      "capturedAt": "2026-11-14T10:19:08.447Z",
+      "latencyMs": 238,
+      "eventId": 31
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 29,
+      "producerAt": "2026-11-14T10:19:08.713Z",
+      "capturedAt": "2026-11-14T10:19:08.951Z",
+      "latencyMs": 238,
+      "eventId": 32
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 30,
+      "producerAt": "2026-11-14T10:19:09.217Z",
+      "capturedAt": "2026-11-14T10:19:09.452Z",
+      "latencyMs": 235,
+      "eventId": 33
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 31,
+      "producerAt": "2026-11-14T10:19:09.721Z",
+      "capturedAt": "2026-11-14T10:19:09.953Z",
+      "latencyMs": 232,
+      "eventId": 34
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 32,
+      "producerAt": "2026-11-14T10:19:10.225Z",
+      "capturedAt": "2026-11-14T10:19:10.452Z",
+      "latencyMs": 227,
+      "eventId": 35
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 33,
+      "producerAt": "2026-11-14T10:19:10.728Z",
+      "capturedAt": "2026-11-14T10:19:10.955Z",
+      "latencyMs": 227,
+      "eventId": 36
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 34,
+      "producerAt": "2026-11-14T10:19:11.232Z",
+      "capturedAt": "2026-11-14T10:19:11.459Z",
+      "latencyMs": 227,
+      "eventId": 37
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 35,
+      "producerAt": "2026-11-14T10:19:11.735Z",
+      "capturedAt": "2026-11-14T10:19:11.954Z",
+      "latencyMs": 219,
+      "eventId": 38
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 36,
+      "producerAt": "2026-11-14T10:19:12.238Z",
+      "capturedAt": "2026-11-14T10:19:12.458Z",
+      "latencyMs": 220,
+      "eventId": 39
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 37,
+      "producerAt": "2026-11-14T10:19:12.742Z",
+      "capturedAt": "2026-11-14T10:19:12.959Z",
+      "latencyMs": 217,
+      "eventId": 40
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 38,
+      "producerAt": "2026-11-14T10:19:13.245Z",
+      "capturedAt": "2026-11-14T10:19:13.459Z",
+      "latencyMs": 214,
+      "eventId": 41
+    },
+    {
+      "commandId": "2dff1427-835d-498e-86bd-47058aaac5ce",
+      "probe": "parent-verification",
+      "sequence": 39,
+      "producerAt": "2026-11-14T10:19:13.746Z",
+      "capturedAt": "2026-11-14T10:19:13.962Z",
+      "latencyMs": 216,
+      "eventId": 42
+    }
+  ]
+}

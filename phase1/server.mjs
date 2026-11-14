@@ -78,7 +78,7 @@ export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/comm
 }
 if(process.argv[1]===fileURLToPath(import.meta.url)) {
   const app=await startInspector({port:Number(process.env.INSPECTOR_PORT??4318),
-    host:process.env.INSPECTOR_HOST??'127.0.0.1',root:process.env.COMMAND_ROOT??'/tmp/commands',
+    host:process.env.INSPECTOR_HOST??'127.0.0.1',dataDir:process.env.INSPECTOR_DATA_DIR??join(dir,'../.phase1-data'),root:process.env.COMMAND_ROOT??'/tmp/commands',
     agentMap:JSON.parse(process.env.AGENT_MAP??'{}'),identityFile:process.env.COMMAND_AGENT_MAP_PATH??null,includeHistory:process.env.INCLUDE_HISTORY==='1'});
   console.log(`Live inspector: ${app.url} (read-only; workspace exec fallback)`);
   for(const sig of ['SIGINT','SIGTERM'])process.on(sig,async()=>{await app.close();process.exit(0);});
