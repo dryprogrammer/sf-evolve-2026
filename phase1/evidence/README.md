@@ -10,6 +10,13 @@
 - Initial collector: average scan **5.41 ms**, RSS **71.2 MiB**, CPU ~**1.68% of one core**. This is resource overhead, not a controlled agent-throughput comparison.
 - **14 automated tests pass**, covering capture, reconnect, restart gaps, malformed metadata, UTF-8 and identity handling. Browser verified the live inspector and disabled steering control.
 
+## CDP correction and new empirical evidence
+- The earlier **401 was a new unauthenticated Node API request**, not a response from local CDP interception. It does not rule out passive capture of an authenticated browser stream.
+- Independent Chromium **157.0.8103.78** successfully used `Network.streamResourceContent` to capture incremental bytes from a browser **Fetch** stream.
+- **6/6 unique markers arrived before the Fetch response completed**; marker-to-CDP latency **157–162 ms**, including the inspector's existing local polling overhead. No remote API requests or credential inspection/export.
+- Source remains actual local exec output: this is proof of the **CDP mechanism**, not authenticated native model tokens. See `cdp-local-probe.json` and the reproducible `phase1/cdp-probe.mjs`.
+- Remaining native prerequisite: a reachable, authorized debugger connection to a **signed-in 8090 conversation tab**. The managed browser listed only the inspector and its wrapper then failed/stayed `SCRIPT_BUSY`; a separate disposable browser does not inherit the user's application login.
+
 ## Model-output extension
 - **Five genuine assistant messages** are now visible in the model-output panel, including audit progress and a fresh model-written reviewer response.
 - Source: supported `read_agent_conversation` reads of conversation `a538b4eb-cf24-5ff4-a694-7f8973b4d0b0`. Selected text is copied without rewriting and imported by the agent.
@@ -26,6 +33,6 @@
 - Initial run logged **143 transient read errors** whose source was not differentiated. No expected marker loss occurred; the hardened run adds categorized diagnostics. Do not hide the initial errors.
 
 ## Recommendation and gate
-Prefer authenticated native resumable SSE, with workspace exec as a narrowly labeled fallback. Keep Phase 1 open for authenticated native/turn-completion/steering validation, **or explicitly approve a limited exec-only Phase 2 integration**. Approval is required before any world modification.
+Prioritize passive CDP capture from the authenticated app’s native resumable SSE, with workspace exec as a narrowly labeled fallback. Keep Phase 1 open for authenticated native/turn-completion/steering validation, **or explicitly approve a limited exec-only Phase 2 integration**. Approval is required before any world modification.
 
 Files below provide actual measurements, concurrency lifecycle metadata, authentication rejection, and exact public frontend contract evidence. Full reproduction instructions are in the repository's `phase1/README.md`. Raw runtime logs remain local/gitignored; only selected non-sensitive evidence is published.

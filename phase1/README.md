@@ -56,6 +56,35 @@ Browser navigation to the current conversation redirected to `/auth`. A read-onl
 
 Frontend acknowledgement distinguishes accepted/queued/started from later `user_message`/`steer_message` consumption. Thus **acceptance is not proof of consumption**, and neither proves the model complied. Need a controlled authenticated test to distinguish mid-turn handling, tool-boundary handling and between-turn delivery. Static contracts may change; they are not supported public API guarantees. See `evidence/static-contracts.json` for exact bundle URL, SHA-256 and snippets; `evidence/native-probe.json` for the runtime rejection.
 
+## CDP investigation — correction to the original blocker
+
+**The recorded 401 was from `phase1/probe.mjs`: a separate unauthenticated Node `fetch` to the remote agent API. It was not a local CDP response, nor the result of passively intercepting an authenticated browser request. That probe does not rule out CDP streaming.**
+
+A browser-attached observer can capture the app's already-authenticated response without obtaining an API token or issuing a duplicate API request. Authentication belongs to the page's HTTP request; it is not required again to read that request's traffic via an authorized local debugger connection. If the page itself receives a 401, CDP will faithfully report it—but CDP does not create that authentication failure.
+
+### Verified CDP mechanism
+
+An independent disposable Chromium **157.0.8103.78** captured real incremental data from the running inspector using **`Network.streamResourceContent` on a browser Fetch response**. All **6/6 unique probe markers** were received while the HTTP response was still open, **before `Network.loadingFinished`**. Marker-to-CDP latency was **157–162 ms**, including the existing filesystem polling stage; it is **not native model-token latency**. No remote API requests were made and no credentials were inspected or exported.
+
+This proves the browser/CDP capture mechanism, not authenticated native 8090 model delivery. The source of this test stream remains genuine local exec-tool output forwarded by the inspector. Earlier local-file capture did not itself establish browser-native streaming; this test is separate evidence.
+
+Reproduce from an active 8090 exec tool (the markers must appear in actual exec logs), with the inspector running at its default local URL:
+
+```sh
+# Disposable browser only; does not read an existing profile or require secrets.
+npx --yes --package @puppeteer/browsers browsers install chrome-headless-shell@stable --path /workspace/phase1-cdp-browser
+# Supply the exact executable path returned by that command:
+node phase1/cdp-probe.mjs /path/to/chrome-headless-shell
+```
+
+The probe uses its own temporary profile and loopback CDP port, attaches before starting the browser Fetch stream, records selected byte/marker evidence, aborts the local stream, and removes the disposable profile. The Node WebSocket client needs no repository package installation. Browser versions differ: `Network.streamResourceContent` is experimental and must be checked on the actual browser. Native `EventSource` events alone are insufficient for the shipped 8090 frontend, which consumes a **POST Fetch stream**. `Network.getResponseBody` is not the incremental mechanism tested here.
+
+### What remains missing
+
+The managed browser inventory listed only the local inspector—not the user's authenticated 8090 application tab. A CDP experiment through `browser_run_code` failed and left that managed browser in `SCRIPT_BUSY`; cancellation and the available open/close tools did not clear it. No public recovery action was exposed. This is a managed-tool failure, not a remote 401 or evidence against CDP. The independent browser experiment above avoided the unavailable wrapper without reading its private transport or profile.
+
+The next native test requires **an authorized CDP connection to a browser containing a signed-in 8090 conversation tab**. The main application session is not automatically shared with a separate workspace/disposable browser. Attach before the page starts or normally reconnects its native stream, then observe existing requests and model `content` deltas through completion. Do not replay the stream unauthenticated or infer that debugger locality supplies page authentication. No token needs to be pasted into chat.
+
 ## Model outputs: verified snapshot fallback
 
 The inspector now shows **five genuine assistant messages** from conversation `a538b4eb-cf24-5ff4-a694-7f8973b4d0b0`, read with the supported `read_agent_conversation` tool. They include historical audit progress messages and a fresh model-written review of the Phase 1 inspector. This is user-visible assistant text, **not private reasoning**, and not shell stdout.
@@ -98,7 +127,7 @@ The initial collector recorded **143 transient read errors** and no persistence 
 
 ## Recommended strategy and approval gate
 
-Prefer authenticated **native resumable SSE** for the eventual world, with event IDs, explicit turn identity, reconnect/history reconciliation and per-conversation authorization. Use only signals actually validated; treat missing streams as unknown/stale. Keep workspace-exec capture as a narrow genuine fallback. Do not substitute simulated state or treat an exec exit as agent idleness/turn completion.
+Prefer **browser-attached CDP capture of the app’s authenticated native resumable SSE** for the next feasibility test; a supported direct API is an alternative if authorized access is available. For the eventual world, with event IDs, explicit turn identity, reconnect/history reconciliation and per-conversation authorization. Use only signals actually validated; treat missing streams as unknown/stale. Keep workspace-exec capture as a narrow genuine fallback. Do not substitute simulated state or treat an exec exit as agent idleness/turn completion.
 
 Before claiming full Phase 1 feasibility: authenticate an authorized test browser/session, monitor two independently active native conversations, measure `done`/terminal status and replay, and send one controlled instruction while a test agent is executing, checking acceptance, consumption event and effect separately. Also test turn-completion history updates if live transport fails.
 

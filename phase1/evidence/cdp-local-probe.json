@@ -1,0 +1,65 @@
+{
+  "probeId": "27c4554f-28e7-4c4c-b5ff-cca63cedaba1",
+  "checkedAt": "2026-11-14T11:08:58.768Z",
+  "scope": "Independent disposable Chromium; actual local inspector SSE, NOT authenticated native 8090 model traffic",
+  "newRemoteApiRequests": 0,
+  "readsCredentials": false,
+  "streamMethod": "Network.streamResourceContent on Fetch response",
+  "responseStatus": 200,
+  "fetchFinished": false,
+  "bufferedBytes": 36808,
+  "incrementalChunks": 7,
+  "incrementalBytes": 3883,
+  "markers": [
+    {
+      "index": 0,
+      "producerAt": "2026-11-14T11:09:00.427Z",
+      "capturedAt": "2026-11-14T11:09:00.573Z",
+      "cdpReceivedAt": "2026-11-14T11:09:00.586Z",
+      "latencyMs": 159,
+      "beforeFetchFinished": true
+    },
+    {
+      "index": 1,
+      "producerAt": "2026-11-14T11:09:00.927Z",
+      "capturedAt": "2026-11-14T11:09:01.072Z",
+      "cdpReceivedAt": "2026-11-14T11:09:01.085Z",
+      "latencyMs": 158,
+      "beforeFetchFinished": true
+    },
+    {
+      "index": 2,
+      "producerAt": "2026-11-14T11:09:01.428Z",
+      "capturedAt": "2026-11-14T11:09:01.574Z",
+      "cdpReceivedAt": "2026-11-14T11:09:01.586Z",
+      "latencyMs": 158,
+      "beforeFetchFinished": true
+    },
+    {
+      "index": 3,
+      "producerAt": "2026-11-14T11:09:01.929Z",
+      "capturedAt": "2026-11-14T11:09:02.074Z",
+      "cdpReceivedAt": "2026-11-14T11:09:02.088Z",
+      "latencyMs": 159,
+      "beforeFetchFinished": true
+    },
+    {
+      "index": 4,
+      "producerAt": "2026-11-14T11:09:02.429Z",
+      "capturedAt": "2026-11-14T11:09:02.572Z",
+      "cdpReceivedAt": "2026-11-14T11:09:02.586Z",
+      "latencyMs": 157,
+      "beforeFetchFinished": true
+    },
+    {
+      "index": 5,
+      "producerAt": "2026-11-14T11:09:02.929Z",
+      "capturedAt": "2026-11-14T11:09:03.076Z",
+      "cdpReceivedAt": "2026-11-14T11:09:03.091Z",
+      "latencyMs": 162,
+      "beforeFetchFinished": true
+    }
+  ],
+  "browserVersion": "HeadlessChrome/157.0.8103.78",
+  "pass": true
+}
