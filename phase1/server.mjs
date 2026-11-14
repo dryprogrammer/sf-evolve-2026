@@ -6,6 +6,7 @@ import { join, dirname } from 'node:path';
 import { CommandCapture } from './capture.mjs';
 import { ModelSnapshotCapture } from './model-snapshots.mjs';
 import { NativeRelay } from './native-relay.mjs';
+import { ArtifactEvidence } from './artifacts.mjs';
 
 const dir = dirname(fileURLToPath(import.meta.url));
 export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/commands',interval=250,
@@ -29,16 +30,17 @@ export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/comm
     return item;
   };
   const nativeRelay=new NativeRelay({emit});
+  const artifacts=new ArtifactEvidence({repository:join(dir,'..'),configFile:join(dataDir,'artifact-baseline.json')});
   const capture = new CommandCapture({root,emit,agentMap,commandAgentMap,includeHistory});
   const modelCapture=new ModelSnapshotCapture({file:modelSnapshotFile??join(dataDir,'model-snapshots.json'),emit});
-  const metrics = () => ({runId,mode:'workspace-exec + imported conversation snapshots',uptimeMs:Date.now()-began,
+  const metrics = () => ({runId,mode:nativeRelay.metrics.frames?'workspace-exec + scoped native CDP relay + imported snapshots':'workspace-exec + imported conversation snapshots',uptimeMs:Date.now()-began,
     eventCount:seq,retainedEvents:events.length,clients:clients.size,writeErrors,
     nativeCapture:{...nativeRelay.metrics},cpu:process.cpuUsage(initialCpu),rssBytes:process.memoryUsage().rss,
     modelSnapshots:{...modelCapture.metrics,delivery:'agent-assisted snapshot import; not live tokens'},
     capture:{...capture.metrics,averageScanMs:capture.metrics.scanMs/Math.max(capture.metrics.scans,1)},
     capabilities:{execLifecycle:'verified locally',execOutput:'verified locally',
-      modelOutput:'assistant text via agent-assisted conversation snapshots; not token streaming',
-      agentState:'unavailable',agentTurnCompletion:'unavailable in this fallback',steering:'disabled; unverified'}});
+      modelOutput:nativeRelay.metrics.parts?'native user-visible CDP text supplied through the scoped collector; producer time unknown':'assistant text via agent-assisted conversation snapshots; not token streaming',
+      agentState:nativeRelay.states.size?'native source status observed; current state may be stale':'unavailable',agentTurnCompletion:'unavailable in this fallback',steering:'disabled; unverified'}});
   const server=http.createServer(async(req,res)=>{
     const url=new URL(req.url,'http://localhost');
     // No shell, remote fetch, arbitrary file write or steering API. Capture-only ingress
@@ -70,6 +72,14 @@ export async function startInspector({port=4318,host='127.0.0.1',root='/tmp/comm
         res.write(`event: gap\ndata: ${JSON.stringify({reason:'Replay window exceeded',oldestId:events[0].id})}\n\n`);
       for(const e of events) if(e.id>cursor)res.write(`id: ${runId}:${e.id}\ndata: ${JSON.stringify(e)}\n\n`);
       clients.add(res); req.on('close',()=>clients.delete(res)); return;
+    }
+    if(url.pathname==='/api/artifacts'){
+      try{res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(await artifacts.snapshot()));}
+      catch{res.end(JSON.stringify({enabled:false,error:'Artifact snapshot unavailable'}));}return;
+    }
+    if(url.pathname==='/api/insights'){
+      let insight=null;try{insight=JSON.parse(await readFile(join(dataDir,'observer-insight.json'),'utf8'));}catch{}
+      res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(insight));return;
     }
     if(url.pathname==='/api/native'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(nativeRelay.snapshots()));return;}
     if(url.pathname==='/api/events'||url.pathname==='/api/metrics'){

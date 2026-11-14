@@ -29,7 +29,7 @@ export class NativeRelay {
  constructor({emit}){this.emit=emit;this.parts=new Map();this.states=new Map();this.seen=new Set();
   this.metrics={frames:0,duplicates:0,gaps:0,parts:0,delivery:'scoped native CDP relay; source time unknown; trusted workspace collector'};}
  accept(input,scope){
-  const frames=validateNativeBatch(input,scope); // Entire batch validated before any dispatch.
+  const frames=validateNativeBatch(input,scope);const updatedParts=new Map(); // Entire batch validated before any dispatch.
   for(const e of frames){
    const key=input.conversationId+'\0'+(e.eventId??JSON.stringify(e));
    if(this.seen.has(key)){this.metrics.duplicates++;continue;}
@@ -52,7 +52,8 @@ export class NativeRelay {
     Object.assign(part,{wireReceivedAt:e.receivedAt,delivery:e.delivery});
     if(this.parts.size>100)this.parts.delete(this.parts.keys().next().value);
     this.metrics.parts=this.parts.size;
-    this.emit({...common,type:'assistant.native.part',summary:'Native model text · provisional projection',payload:{...part,frame:e,
+    this.emit({...common,type:'native.content',summary:'Native user-visible delta',payload:e});
+    updatedParts.set(partKey,{...common,type:'assistant.native.part',summary:'Native model text · provisional projection',payload:{...part,frame:e,
      provenance:'Trusted scoped collector; source browser authentication verified separately',generationTimestamp:null}});
    }else{
     if(e.type==='status')this.states.set(input.conversationId,{conversationId:input.conversationId,
@@ -62,6 +63,7 @@ export class NativeRelay {
     this.emit({...common,type:'native.'+e.type,summary:'Native source observation',payload:e});
    }
   }
+  for(const event of updatedParts.values())this.emit(event);
   return {accepted:frames.length,retainedParts:this.parts.size};
  }
  snapshots(){return {states:[...this.states.values()],parts:[...this.parts.values()]};}
