@@ -1,0 +1,41 @@
+Verified revision: e862a3b0e5e14c478d18a61598302f06c5004663
+Started: 2026-11-14T18:50:28.698Z
+Command: npm run test
+
+
+> sf-evolve-2026@0.1.0 test
+> vitest run
+
+
+ RUN  v3.2.7 /workspace/dryprogrammer/sf-evolve-2026
+
+ ✓ tests/store.test.ts (11 tests) 6265ms
+   ✓ transactional persistence > persists private drafts, detects conflicts and retains monotonically increasing discard versions  749ms
+   ✓ transactional persistence > reconciles identical retries and rejects same key with new content  619ms
+   ✓ transactional persistence > serializes competing commands and rolls back failure without receipt  490ms
+   ✓ transactional persistence > recovers confirmed state after database reopen  870ms
+   ✓ transactional persistence > redacts both historical and current evidence and drafts after detected revocation  594ms
+   ✓ transactional persistence > reverifies unchanged evidence after PostgreSQL JSONB serialization  608ms
+   ✓ transactional persistence > treats reordered object keys as the same idempotent command  451ms
+   ✓ transactional persistence > retains the original evidence snapshot after source refresh  484ms
+   ✓ transactional persistence > rejects a displayed-persona mismatch before mutating another private draft  487ms
+   ✓ transactional persistence > reconciles a committed receipt despite a subsequent outage or revocation  469ms
+   ✓ transactional persistence > SQL constraint independently rejects two open rounds  444ms
+ ✓ tests/handoff-gates.test.ts (2 tests) 766ms
+   ✓ handoff evidence gates > store: rejects stale approval and requires a fresh review without losing attribution  756ms
+ ✓ tests/navigation.test.ts (5 tests) 180ms
+ ✓ tests/review.test.ts (10 tests) 22ms
+ ✓ tests/http.test.ts (5 tests) 9ms
+ ✓ tests/attention.test.ts (7 tests) 5ms
+ ✓ tests/renewal.test.ts (3 tests) 2ms
+
+ Test Files  7 passed (7)
+      Tests  43 passed (43)
+   Start at  18:50:28
+   Duration  8.34s (transform 135ms, setup 0ms, collect 227ms, tests 7.25s, environment 1ms, prepare 255ms)
+
+stderr | tests/http.test.ts > fixture HTTP trust boundary > rejects malformed and oversized bodies
+Factory request failed: Error
+
+
+Exit: 0

@@ -32,12 +32,12 @@ test('human review journey preserves privacy, human concerns and source progress
  await expect(page.getByRole('button',{name:'Submit sign-off'})).toHaveCount(0);
  await page.getByLabel('Your contribution').fill('Agent observation only.');
  await page.getByRole('button',{name:'Submit feedback',exact:true}).click();
- await expect(page.getByText('Agent observation only.',{exact:true})).toBeVisible();
+ await expect(page.locator('.contribution .preserve').filter({hasText:'Agent observation only.'})).toBeVisible();
  await page.getByLabel('Fixture persona').selectOption('alex');
  await page.getByLabel('Your contribution').fill('Keep the live source adapter disabled until authorization is verified.');
  await page.getByLabel('Disposition',{exact:true}).selectOption('request_changes');
  await page.getByRole('button',{name:'Submit feedback',exact:true}).click();
- await expect(page.getByText('Keep the live source adapter disabled until authorization is verified.',{exact:true})).toBeVisible();
+ await expect(page.locator('.contribution .preserve').filter({hasText:'Keep the live source adapter disabled until authorization is verified.'})).toBeVisible();
  await page.getByLabel('Sign-off rationale').fill('Fixture-only authority checks are verified.');
  await page.getByRole('button',{name:'Submit sign-off'}).click();
  await expect(page.getByText('Sign-off: approve',{exact:true})).toBeVisible();

@@ -1,0 +1,197 @@
+{
+  "kind": "live Factory API source read/change; local programmatic demo-persona review",
+  "codeRevision": "ace15632672c71520e2c510793cdf71adca476a0",
+  "presentationRevision": "b811493",
+  "startedAt": "2026-11-14T20:19:25.291Z",
+  "finishedAt": "2026-11-14T20:23:23.731Z",
+  "workId": "c8127cba-c26f-4eb6-8183-e5e09d36f732",
+  "probeId": "0a8c2f35-4b39-4033-b6d0-81655e05d1e4",
+  "probeOriginalUpdatedAt": "2026-11-14T20:11:37.177761",
+  "sourceEvidence": [
+    {
+      "id": "work_order:c8127cba-c26f-4eb6-8183-e5e09d36f732",
+      "title": "Implement authorized work-context and draft APIs",
+      "sourceRef": "https://factory.8090.ai/project/e6c7fbf5-1f8a-4427-a320-c9eaad5ff200/work-orders/2",
+      "provenance": {
+        "provider": "factory",
+        "updatedAt": "2026-11-14T18:14:34.531432",
+        "resourceId": "c8127cba-c26f-4eb6-8183-e5e09d36f732",
+        "resourceType": "work_order",
+        "supplemental": false,
+        "contentDigest": "8b69dc83317a0a85876749605b8fa8eb5dccdbec15b99b105fedfe0a35e70d24"
+      }
+    },
+    {
+      "id": "artifact:0a8c2f35-4b39-4033-b6d0-81655e05d1e4",
+      "title": "DEMO \u2014 API revision probe for WO-2 (non-sensitive supplemental evidence)",
+      "sourceRef": "https://factory.8090.ai/project/e6c7fbf5-1f8a-4427-a320-c9eaad5ff200/knowledge-base/0a8c2f35-4b39-4033-b6d0-81655e05d1e4",
+      "provenance": {
+        "provider": "factory",
+        "updatedAt": "2026-11-14T20:11:37.177761",
+        "resourceId": "0a8c2f35-4b39-4033-b6d0-81655e05d1e4",
+        "resourceType": "artifact",
+        "supplemental": true,
+        "contentDigest": "e41144d0cb16b309a25d11714e75e666bc1adb139c669e06dc09e599e87caeb0"
+      }
+    },
+    {
+      "id": "blueprint:db907355-86a7-4bcc-8a2f-7737c85f8183",
+      "title": "Persisted Work Context",
+      "sourceRef": "https://factory.8090.ai/project/e6c7fbf5-1f8a-4427-a320-c9eaad5ff200/blueprints/db907355-86a7-4bcc-8a2f-7737c85f8183",
+      "provenance": {
+        "provider": "factory",
+        "updatedAt": "2026-11-14T14:40:45.280360",
+        "resourceId": "db907355-86a7-4bcc-8a2f-7737c85f8183",
+        "revisionId": "1813f625-2782-4c20-8b0b-6ce54e519b28",
+        "resourceType": "blueprint",
+        "supplemental": false,
+        "contentDigest": "9aed6506ba53103ca27fc9acc472cc97ff736992bcc5e40ac32b37c53bfe7713"
+      }
+    },
+    {
+      "id": "blueprint:e94f7650-5260-426c-a9d3-1b3685f21fee",
+      "title": "Collaboration Access and Persistence",
+      "sourceRef": "https://factory.8090.ai/project/e6c7fbf5-1f8a-4427-a320-c9eaad5ff200/blueprints/e94f7650-5260-426c-a9d3-1b3685f21fee",
+      "provenance": {
+        "provider": "factory",
+        "updatedAt": "2026-11-14T15:10:42.829807",
+        "resourceId": "e94f7650-5260-426c-a9d3-1b3685f21fee",
+        "revisionId": "0b2d4040-70f2-4415-94f1-833413e7c2d1",
+        "resourceType": "blueprint",
+        "supplemental": false,
+        "contentDigest": "7cab2081be071cdb02b7aae706e3d7a11a033039916aadb8e75eb9b830ebdb93"
+      }
+    },
+    {
+      "id": "requirements_document:ca86c93a-63ed-4996-888e-c46147f3a186",
+      "title": "Persisted Work Context",
+      "sourceRef": "https://factory.8090.ai/project/e6c7fbf5-1f8a-4427-a320-c9eaad5ff200/requirements/ca86c93a-63ed-4996-888e-c46147f3a186",
+      "provenance": {
+        "provider": "factory",
+        "updatedAt": "2026-11-14T09:25:22.747272",
+        "resourceId": "ca86c93a-63ed-4996-888e-c46147f3a186",
+        "revisionId": "850b6d8e-edfa-4f80-a6ef-5eefbeaa50b9",
+        "resourceType": "requirements_document",
+        "supplemental": false,
+        "contentDigest": "ff82dd6325945e58e5476b7453ae34560585c36d0ce687be719a971623afc0b1"
+      }
+    }
+  ],
+  "sourceChange": {
+    "at": "2026-11-14T20:22:46.514Z",
+    "method": "PATCH /artifacts/{probeId}",
+    "verifiedReadAfterWrite": true,
+    "updatedAt": "2026-11-14T20:22:45.604050"
+  },
+  "mcp": "DEFERRED: no verified Factory-to-app connection; no human answer fabricated.",
+  "oldSnapshot": {
+    "id": "47ec0f50-8dd1-4fd3-889d-20d0b1991fa6",
+    "digest": "501d786b52c258a758ed25eba53b026255371fa67f362ee853f708691e1e8322",
+    "retrievedAt": "2026-11-14T20:19:07.053Z",
+    "sourceVersion": 1
+  },
+  "changedSnapshot": {
+    "id": "db9421ed-ad37-4adb-a74d-1d59e7a73a5a",
+    "digest": "fc269dc15123d444e82639299311bf53c236bb4c3c422328fa656a1b0320c83f",
+    "retrievedAt": "2026-11-14T20:23:20.681Z",
+    "sourceVersion": 2
+  },
+  "oldRound": {
+    "id": "d597e4a7-feaf-498a-bfa8-d64a4ca49e1d",
+    "state": "open",
+    "decisionMakerId": "maya",
+    "assignments": [
+      {
+        "id": "319a1867-5f04-4c93-98a4-3aa9d348fa30",
+        "role": "Finance",
+        "question": "Does this exact Factory evidence basis support the bounded demo integration?",
+        "generation": 1,
+        "reviewerId": "alex",
+        "responsibility": "required"
+      }
+    ],
+    "feedback": [
+      {
+        "id": "5ef575b5-5b1a-4879-8670-b07212c5ffb0",
+        "kind": "human",
+        "text": "Scripted demo-persona contribution: standard payment terms use 20%; custom terms remain 15%. This is not an actual MCP human answer or approval.",
+        "actorId": "maya",
+        "createdAt": "2026-11-14T20:19:17.318Z",
+        "snapshotId": "47ec0f50-8dd1-4fd3-889d-20d0b1991fa6",
+        "disposition": "advice"
+      }
+    ],
+    "signoffs": [
+      {
+        "id": "df4b041d-17af-4bc0-bfac-455c1ca28159",
+        "actorId": "alex",
+        "outcome": "approve",
+        "createdAt": "2026-11-14T20:19:22.153Z",
+        "rationale": "Programmatic fictional Alex sign-off for the original Factory evidence basis; not independent human authentication.",
+        "generation": 1,
+        "snapshotId": "47ec0f50-8dd1-4fd3-889d-20d0b1991fa6",
+        "assignmentId": "319a1867-5f04-4c93-98a4-3aa9d348fa30"
+      }
+    ]
+  },
+  "rejections": [
+    {
+      "status": 409,
+      "error": {
+        "code": "changed_evidence",
+        "message": "Authoritative Factory evidence changed. Cancel and review it in a new round; prior sign-offs cannot be renewed by refresh."
+      },
+      "operation": "decide",
+      "roundId": "d597e4a7-feaf-498a-bfa8-d64a4ca49e1d"
+    },
+    {
+      "status": 409,
+      "error": {
+        "code": "changed_evidence",
+        "message": "Authoritative Factory evidence changed. Cancel and review it in a new round; prior sign-offs cannot be renewed by refresh."
+      },
+      "operation": "decide",
+      "roundId": "d597e4a7-feaf-498a-bfa8-d64a4ca49e1d"
+    }
+  ],
+  "recovery": {
+    "id": "379d17bf-b61e-475a-ac07-e2c08b330091",
+    "state": "approved",
+    "decisionMakerId": "maya",
+    "signoffs": [
+      {
+        "id": "c83427d8-473e-4c1f-bc73-152e538e4f88",
+        "actorId": "alex",
+        "outcome": "approve",
+        "createdAt": "2026-11-14T20:24:57.972Z",
+        "rationale": "Programmatic demo persona re-review of revised Factory content; not an independent authenticated human.",
+        "generation": 1,
+        "snapshotId": "db9421ed-ad37-4adb-a74d-1d59e7a73a5a",
+        "assignmentId": "e3985f43-8612-4c94-8664-a6f399f21802"
+      }
+    ],
+    "decision": {
+      "digest": "fc269dc15123d444e82639299311bf53c236bb4c3c422328fa656a1b0320c83f",
+      "actorId": "maya",
+      "outcome": "approve",
+      "createdAt": "2026-11-14T20:25:04.964Z",
+      "rationale": "New demo review basis verified; no native Factory work status, release or approval changed.",
+      "responses": {},
+      "verifiedAt": "2026-11-14T20:25:04.964Z"
+    },
+    "snapshotDigest": "fc269dc15123d444e82639299311bf53c236bb4c3c422328fa656a1b0320c83f"
+  },
+  "recoveryPendingGate": {
+    "status": 409,
+    "error": {
+      "code": "pending_signoffs",
+      "message": "All current required human sign-offs must approve."
+    }
+  },
+  "recoveredAt": "2026-11-14T20:25:04.988Z",
+  "browserEvidence": {
+    "rationalePreserved": "Demo operator attempt: approve only this exact Factory evidence basis. This text must survive rejection.",
+    "screenshot": "https://factory.8090.ai/project/e6c7fbf5-1f8a-4427-a320-c9eaad5ff200/repro-evidence/ef5d3137-7a96-4fee-bd4e-3a912d1c1a6e",
+    "recording": "https://factory.8090.ai/project/e6c7fbf5-1f8a-4427-a320-c9eaad5ff200/repro-evidence/69d9ac5c-3e00-456b-a408-595eeeaf1acd"
+  }
+}
